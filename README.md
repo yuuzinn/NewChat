@@ -8,7 +8,7 @@
 - Web Socket
 # ERD 🖇️
 
-[My ERD ver 1.0](https://github.com/yeb0/NewChat/wiki/ERD-ver-1.0)
+[My ERD ver 1.0](https://github.com/yeb0/NewChat/wiki/Architecture,-ERD-ver-1.0)
 
 # WIKI 📜
 [My WIKI](https://github.com/yeb0/NewChat/wiki)
