@@ -1,12 +1,12 @@
 package project.newchat.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.UserRequest;
 import project.newchat.user.repository.UserRepository;
 
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Service
@@ -28,4 +28,12 @@ public class UserServiceImpl implements UserService {
                 .build();
         return userRepository.save(userSave);
     }
+
+    @Override
+    public User login(UserRequest user) {
+        return userRepository.findUserByEmailAndPassword(user.getEmail(), user.getPassword())
+                .orElseThrow(() -> new IllegalArgumentException("아이디와 비밀번호 불일치"));
+    }
+
+
 }
