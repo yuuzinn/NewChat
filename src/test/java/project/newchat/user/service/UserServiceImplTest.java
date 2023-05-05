@@ -8,10 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.UserRequest;
-import project.newchat.user.repository.UserRepository;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
@@ -43,5 +39,35 @@ class UserServiceImplTest {
         org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.signUp(userRequest2))
                 .isInstanceOf(IllegalArgumentException.class);
 
+    }
+
+    @Test
+    @DisplayName("로그인 성공")
+    void login_success() {
+        UserRequest userRequest1 = new UserRequest("test1234@naver.com", "12345", "test");
+        userService.signUp(userRequest1);
+
+        User login = userService.login(userRequest1);
+        org.assertj.core.api.Assertions.assertThat(userRequest1.getPassword()).isEqualTo(login.getPassword());
+        org.assertj.core.api.Assertions.assertThat(userRequest1.getEmail()).isEqualTo(login.getEmail());
+
+
+    }
+
+    @Test
+    @DisplayName("로그인 실패_이메일 비밀번호 불일치")
+    void login_failed() {
+        UserRequest userRequest1 = new UserRequest("test1234@naver.com", "12345", "test");
+        userService.signUp(userRequest1);
+        UserRequest failUserRequest1 = new UserRequest("test12234@naver.com", "12345", "test");
+        UserRequest failUserRequest2 = new UserRequest("test1234@naver.com", "2", "test");
+        UserRequest failUserRequest3 = new UserRequest("22@naver.com", "22", "test");
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(failUserRequest1))
+                .isInstanceOf(IllegalArgumentException.class);
+        org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(failUserRequest2))
+                .isInstanceOf(IllegalArgumentException.class);
+        org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(failUserRequest3))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
