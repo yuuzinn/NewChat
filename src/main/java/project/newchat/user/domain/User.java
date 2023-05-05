@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.newchat.chatmsg.domain.ChatMsg;
 import project.newchat.chatroom.domain.ChatRoom;
+import project.newchat.userchatroom.domain.UserChatRoom;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -27,8 +29,12 @@ public class User {
 
     private String nickname;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<ChatRoom> chatRooms;
+    private List<UserChatRoom> userChatRooms;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<ChatMsg> chatMsgs;

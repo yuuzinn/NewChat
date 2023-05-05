@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.newchat.chatmsg.domain.ChatMsg;
 import project.newchat.user.domain.User;
+import project.newchat.userchatroom.domain.UserChatRoom;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,13 +25,16 @@ public class ChatRoom {
 
     private String title;
 
-    private boolean isMaster;
 
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    private LocalDateTime updatedAt;
+
+    private LocalDateTime deletedAt;
+
+
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
+    private List<UserChatRoom> userChatRooms;
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<ChatMsg> chatMsgs;
