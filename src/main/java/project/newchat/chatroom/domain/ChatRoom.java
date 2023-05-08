@@ -32,6 +32,8 @@ public class ChatRoom {
 
     private LocalDateTime deletedAt;
 
+    private String roomCreator;
+
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<UserChatRoom> userChatRooms;
