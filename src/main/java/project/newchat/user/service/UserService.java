@@ -2,6 +2,7 @@ package project.newchat.user.service;
 
 import org.springframework.stereotype.Service;
 import project.newchat.user.domain.User;
+import project.newchat.user.domain.request.LoginRequest;
 import project.newchat.user.domain.request.UserRequest;
 
 import javax.servlet.http.HttpSession;
@@ -10,7 +11,7 @@ import javax.servlet.http.HttpSession;
 public interface UserService {
     User signUp(UserRequest user);
 
-    User login(UserRequest user);
+    User login(LoginRequest user);
 
 
 

@@ -6,8 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import project.newchat.exception.CustomException;
+import project.newchat.common.exception.CustomException;
 import project.newchat.user.domain.User;
+import project.newchat.user.domain.request.LoginRequest;
 import project.newchat.user.domain.request.UserRequest;
 
 
@@ -48,7 +49,9 @@ class UserServiceImplTest {
         UserRequest userRequest1 = new UserRequest("test1234@naver.com", "12345", "test");
         userService.signUp(userRequest1);
 
-        User login = userService.login(userRequest1);
+        LoginRequest loginRequest = new LoginRequest("test1234@naver.com", "12345");
+
+        User login = userService.login(loginRequest);
         org.assertj.core.api.Assertions.assertThat(userRequest1.getPassword()).isEqualTo(login.getPassword());
         org.assertj.core.api.Assertions.assertThat(userRequest1.getEmail()).isEqualTo(login.getEmail());
 
@@ -60,15 +63,13 @@ class UserServiceImplTest {
     void login_failed() {
         UserRequest userRequest1 = new UserRequest("test1234@naver.com", "12345", "test");
         userService.signUp(userRequest1);
-        UserRequest failUserRequest1 = new UserRequest("test12234@naver.com", "12345", "test");
-        UserRequest failUserRequest2 = new UserRequest("test1234@naver.com", "2", "test");
-        UserRequest failUserRequest3 = new UserRequest("22@naver.com", "22", "test");
 
-        org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(failUserRequest1))
+        LoginRequest loginRequest2 = new LoginRequest("test1234@naver.com", "2");
+        LoginRequest loginRequest3 = new LoginRequest("22@naver.com", "22");
+
+        org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(loginRequest2))
                 .isInstanceOf(CustomException.class);
-        org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(failUserRequest2))
-                .isInstanceOf(CustomException.class);
-        org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(failUserRequest3))
+        org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(loginRequest3))
                 .isInstanceOf(CustomException.class);
     }
 }

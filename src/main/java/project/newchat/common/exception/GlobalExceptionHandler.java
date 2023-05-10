@@ -1,6 +1,5 @@
-package project.newchat.exception;
+package project.newchat.common.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.validation.FieldError;
@@ -13,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static project.newchat.type.ErrorCode.INTERNAL_SERVER_ERROR;
-import static project.newchat.type.ErrorCode.INVALID_REQUEST;
+import static project.newchat.common.type.ErrorCode.INTERNAL_SERVER_ERROR;
+import static project.newchat.common.type.ErrorCode.INVALID_REQUEST;
 
 @Slf4j
 @RestControllerAdvice
