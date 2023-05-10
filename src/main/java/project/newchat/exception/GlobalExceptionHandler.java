@@ -1,11 +1,17 @@
 package project.newchat.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import project.newchat.dto.ErrorResponse;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static project.newchat.type.ErrorCode.INTERNAL_SERVER_ERROR;
 import static project.newchat.type.ErrorCode.INVALID_REQUEST;
@@ -18,14 +24,19 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleCustomException(CustomException e) {
         log.error("{} 가 발생하였습니다.", e.getErrorCode());
 
-        return new ErrorResponse(e.getErrorCode(), e.getErrorCode().getDescription());
+        return new ErrorResponse(e.getErrorCode(), e.getErrorMessage());
     }
 
+    //유효성
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.error("유효한 값이 아닙니다.", e);
-
-        return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getDescription());
+        List<FieldError> fieldError = e.getFieldErrors();
+        Map<String,String> bindingResult =new HashMap<>();
+        for (FieldError error : fieldError) {
+            bindingResult.put(error.getField(),error.getDefaultMessage());
+        }
+        return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getDescription(),bindingResult);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
