@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleCustomException(CustomException e) {
         log.error("{} 가 발생하였습니다.", e.getErrorCode());
 
-        return new ErrorResponse(e.getErrorCode(), e.getErrorMessage());
+        return new ErrorResponse(e.getErrorCode(), e.getErrorCode().getDescription());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

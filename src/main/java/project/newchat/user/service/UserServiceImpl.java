@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     public User signUp(UserRequest user) {
         Optional<User> email = userRepository.findByEmail(user.getEmail());
         if (email.isPresent()) {
-            throw new CustomException(ErrorCode.ALREADY_USER_ID);
+            throw new CustomException(ErrorCode.ALREADY_USER_ID, user.getEmail());
         }
         User userSave = User.builder()
                 .email(user.getEmail())
