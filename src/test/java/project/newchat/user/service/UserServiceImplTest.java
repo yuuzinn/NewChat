@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import project.newchat.exception.CustomException;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.UserRequest;
 
@@ -37,7 +38,7 @@ class UserServiceImplTest {
         UserRequest userRequest2 = new UserRequest("test1234@naver.com", "1234", "test");
 
         org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.signUp(userRequest2))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CustomException.class);
 
     }
 
@@ -64,10 +65,10 @@ class UserServiceImplTest {
         UserRequest failUserRequest3 = new UserRequest("22@naver.com", "22", "test");
 
         org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(failUserRequest1))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CustomException.class);
         org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(failUserRequest2))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CustomException.class);
         org.assertj.core.api.Assertions.assertThatThrownBy(()->userService.login(failUserRequest3))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CustomException.class);
     }
 }
