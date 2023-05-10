@@ -1,7 +1,7 @@
-package project.newchat.exception;
+package project.newchat.common.exception;
 
 import lombok.*;
-import project.newchat.type.ErrorCode;
+import project.newchat.common.type.ErrorCode;
 
 @Getter
 @Setter

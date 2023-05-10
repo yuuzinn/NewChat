@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import project.newchat.common.config.LoginCheck;
 import project.newchat.user.domain.User;
+import project.newchat.user.domain.request.LoginRequest;
 import project.newchat.user.domain.request.UserRequest;
 import project.newchat.user.service.UserService;
 
@@ -29,7 +31,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(
-            @RequestBody @Valid UserRequest userRequest,
+            @RequestBody @Valid LoginRequest userRequest,
             HttpSession session) {
         User login = userService.login(userRequest);
         session.setAttribute("user", login.getId());
@@ -37,6 +39,7 @@ public class UserController {
     }
 
     @PostMapping("/logout")
+    @LoginCheck
     public ResponseEntity<Object> logout(HttpSession session) {
         session.invalidate();
         return ResponseEntity.ok().body("success");

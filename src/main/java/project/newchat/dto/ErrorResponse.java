@@ -1,9 +1,8 @@
 package project.newchat.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import project.newchat.type.ErrorCode;
+import project.newchat.common.type.ErrorCode;
 
 import java.util.Map;
 
