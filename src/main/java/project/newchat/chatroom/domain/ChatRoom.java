@@ -25,14 +25,13 @@ public class ChatRoom {
 
     private String title;
 
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    private LocalDateTime deletedAt;
+    private Long roomCreator;
 
-    private String roomCreator;
+    private Integer userCountMax; // 최대 인원 8명
 
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)

@@ -1,4 +1,4 @@
-package project.newchat.common.exception;
+package project.newchat.common.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -6,6 +6,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import project.newchat.common.exception.CustomException;
 import project.newchat.dto.ErrorResponse;
 
 import java.util.HashMap;
