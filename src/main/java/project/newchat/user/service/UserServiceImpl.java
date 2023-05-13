@@ -1,5 +1,6 @@
 package project.newchat.user.service;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.newchat.common.exception.CustomException;
@@ -27,6 +28,7 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .nickname(user.getNickname())
+                .createdAt(LocalDateTime.now())
                 .build();
         return userRepository.save(userSave);
     }
