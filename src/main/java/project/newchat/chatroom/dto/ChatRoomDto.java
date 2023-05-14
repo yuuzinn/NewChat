@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.newchat.chatroom.domain.ChatRoom;
 
 @Getter
 @Setter
@@ -19,4 +20,13 @@ public class ChatRoomDto {
   private Long currentUserCount;
 
   private Integer userCountMax;
+
+  public static ChatRoomDto of(ChatRoom chatRoom) {
+    return ChatRoomDto.builder()
+        .id(chatRoom.getId())
+        .title(chatRoom.getTitle())
+        .currentUserCount((long) chatRoom.getUserChatRooms().size())
+        .userCountMax(chatRoom.getUserCountMax())
+        .build();
+  }
 }

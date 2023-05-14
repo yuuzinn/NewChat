@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -97,7 +98,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
   // 자신이 생성한 방 리스트 조회
   @Override
-  public List<ChatRoomDto> getUserByRoomList(Long userId, Pageable pageable) {
+  public List<ChatRoomDto> roomsByCreatorUser(Long userId, Pageable pageable) {
     Page<ChatRoom> all = chatRoomRepository.findAllByUserId(userId, pageable);
     return getChatRoomDtos(all);
   }
@@ -114,7 +115,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Transactional
   public void outRoom(Long userId, Long roomId) {
     Long roomCreatorId = chatRoomRepository
-        .findChatRoomByRoomCreator(roomId);
+        .findChatRoomIdByRoomId(roomId);
     // 방장이 아니라면
     if (!Objects.equals(roomCreatorId, userId)) {
       userChatRoomRepository.deleteUserChatRoomByUserId(userId);
@@ -129,7 +130,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Transactional
   public void deleteRoom(Long userId, Long roomId) {
     Long roomCreatorId = chatRoomRepository
-        .findChatRoomByRoomCreator(roomId);
+        .findChatRoomIdByRoomId(roomId);
     if (!Objects.equals(roomCreatorId, userId)) {
       throw new CustomException(ErrorCode.NOT_ROOM_CREATOR);
     }
@@ -141,19 +142,21 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
   // 방 조회 DTO 변환 메서드 추출
   private static List<ChatRoomDto> getChatRoomDtos(Page<ChatRoom> all) {
-    List<ChatRoomDto> chatRoomList = new ArrayList<>();
-
-    for (ChatRoom list : all) {
-      ChatRoomDto dto = ChatRoomDto.builder()
-          .id(list.getId())
-          .title(list.getTitle())
-          .currentUserCount((long) list.getUserChatRooms().size())
-          .userCountMax(list.getUserCountMax())
-          .build();
-
-      chatRoomList.add(dto);
-    }
-    return chatRoomList;
+//    List<ChatRoomDto> chatRoomList = new ArrayList<>();
+//
+//    for (ChatRoom list : all) {
+//      ChatRoomDto dto = ChatRoomDto.builder()
+//          .id(list.getId())
+//          .title(list.getTitle())
+//          .currentUserCount((long) list.getUserChatRooms().size())
+//          .userCountMax(list.getUserCountMax())
+//          .build();
+//
+//      chatRoomList.add(dto);
+//    }
+//    return chatRoomList;
+    return all.stream()
+        .map(ChatRoomDto::of)
+        .collect(Collectors.toList());
   }
-
 }

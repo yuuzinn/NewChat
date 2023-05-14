@@ -65,7 +65,7 @@ public class ChatRoomController {
       HttpSession session,Pageable pageable) {
 
     Long userId = (Long) session.getAttribute("user");
-    List<ChatRoomDto> userByRoomList = chatRoomService.getUserByRoomList(userId, pageable);
+    List<ChatRoomDto> userByRoomList = chatRoomService.roomsByCreatorUser(userId, pageable);
     return ResponseEntity.ok().body(userByRoomList);
   }
   // 사용자(자신)가 들어가 있는 방 리스트 조회

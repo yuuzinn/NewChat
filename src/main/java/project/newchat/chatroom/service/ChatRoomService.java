@@ -15,7 +15,7 @@ public interface ChatRoomService {
   List<ChatRoomDto> getRoomList(Pageable pageable);
 
 
-  List<ChatRoomDto> getUserByRoomList(Long userId, Pageable pageable);
+  List<ChatRoomDto> roomsByCreatorUser(Long userId, Pageable pageable);
 
   List<ChatRoomDto> getUserByRoomPartList(Long userId, Pageable pageable);
 
