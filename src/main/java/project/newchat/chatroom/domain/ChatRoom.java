@@ -39,4 +39,17 @@ public class ChatRoom {
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<ChatMsg> chatMsgs;
+
+    @Override
+    public String toString() {
+        return "ChatRoom{" +
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", createdAt=" + createdAt +
+            ", updatedAt=" + updatedAt +
+            ", roomCreator=" + roomCreator +
+            ", userCountMax=" + userCountMax +
+            ", userChatRooms=" + userChatRooms.size() +
+            '}';
+    }
 }

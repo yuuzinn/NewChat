@@ -14,7 +14,10 @@ public enum ErrorCode {
     NOT_LOGIN("로그인이 되어 있지 않습니다."),
     NOT_FOUND_USER("유저를 찾을 수 없습니다."),
     NOT_FOUND_ROOM("이미 삭제된 방이거나 방을 찾을 수 없습니다."),
-    ROOM_USER_FULL("방에 사용자가 다 차 있습니다.");
+    ROOM_USER_FULL("방에 사용자가 다 차 있습니다."),
+    NONE_ROOM("현재 방이 없습니다."),
+    CHAT_ERROR("채팅이 전송에 오류가 있습니다."),
+    NOT_ROOM_CREATOR("방 생성자가 아닙니다.")
     ;
 
     private final String description;
