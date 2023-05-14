@@ -17,7 +17,9 @@ public enum ErrorCode {
     ROOM_USER_FULL("방에 사용자가 다 차 있습니다."),
     NONE_ROOM("현재 방이 없습니다."),
     CHAT_ERROR("채팅이 전송에 오류가 있습니다."),
-    NOT_ROOM_CREATOR("방 생성자가 아닙니다.")
+    NOT_ROOM_CREATOR("방 생성자가 아닙니다."),
+    NOT_EXIST_CLIENT("채팅방에 클라이언트가 없습니다."),
+    ALREADY_JOIN_ROOM("이미 채팅방에 입장해 있습니다.")
     ;
 
     private final String description;

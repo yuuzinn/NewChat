@@ -18,6 +18,7 @@ import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.repository.ChatRoomRepository;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.UserRequest;
+import project.newchat.user.dto.UserDto;
 import project.newchat.user.service.UserService;
 import project.newchat.userchatroom.repository.UserChatRoomRepository;
 
@@ -50,7 +51,7 @@ public class ConcurrencyChatRoomTest {
     List<User> users = new ArrayList<>();
     for (int i = 0; i < 30; i++) {
       UserRequest user = new UserRequest(i + "아이디", "12345", "test");
-      User user1 = userService.signUp(user);
+      User user1 = userService.signUpTest(user);
       users.add(user1);
     }
 

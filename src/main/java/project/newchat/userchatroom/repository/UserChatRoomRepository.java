@@ -1,5 +1,6 @@
 package project.newchat.userchatroom.repository;
 
+import java.util.List;
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,7 @@ public interface UserChatRoomRepository extends JpaRepository<UserChatRoom, Long
   void deleteUserChatRoomByChatRoom_Id(Long chatRoomId);
 
   void deleteUserChatRoomByUserId(Long userId);
+
+  @Query("select u.user.id from UserChatRoom u where u.chatRoom.id = ?1")
+  List<Long> findUserChatRoomByChatRoom_Id(Long chatRoomId);
 }

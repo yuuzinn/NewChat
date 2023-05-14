@@ -10,6 +10,7 @@ import project.newchat.common.exception.CustomException;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.LoginRequest;
 import project.newchat.user.domain.request.UserRequest;
+import project.newchat.user.dto.UserDto;
 
 
 @SpringBootTest
@@ -22,10 +23,10 @@ class UserServiceImplTest {
     @DisplayName("회원가입 성공")
     void signUp_success() {
         UserRequest userRequest1 = new UserRequest("test1234@naver.com", "1234", "test");
-        User user1 = userService.signUp(userRequest1);
+        UserDto user1 = userService.signUp(userRequest1);
 
         UserRequest userRequest2 = new UserRequest("test12345@naver.com", "1234", "test");
-        User user2 = userService.signUp(userRequest2);
+        UserDto user2 = userService.signUp(userRequest2);
 
         Assertions.assertNotEquals(user1.getEmail(), user2.getEmail());
     }
