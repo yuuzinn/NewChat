@@ -121,10 +121,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Override
   @Transactional
   public void outRoom(Long userId, Long roomId) {
-    Optional<ChatRoom> roomCreatorId = chatRoomRepository
-        .findChatRoomById(roomId);
+    ChatRoom room = chatRoomRepository
+        .findChatRoomById(roomId)
+        .orElseThrow(() -> new CustomException(ErrorCode.NONE_ROOM));
     // 방장이 아니라면
-    if (!Objects.equals(roomCreatorId.get().getRoomCreator(), userId)) {
+    if (!Objects.equals(room.getRoomCreator(), userId)) {
       userChatRoomRepository.deleteUserChatRoomByUserId(userId);
       return;
     }
@@ -137,9 +138,10 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Override
   @Transactional
   public void deleteRoom(Long userId, Long roomId) {
-    Optional<ChatRoom> roomCreatorId = chatRoomRepository
-        .findChatRoomById(roomId);
-    if (!Objects.equals(roomCreatorId.get().getRoomCreator(), userId)) {
+    ChatRoom room = chatRoomRepository
+        .findChatRoomById(roomId)
+        .orElseThrow(() -> new CustomException(ErrorCode.NONE_ROOM));
+    if (!Objects.equals(room.getRoomCreator(), userId)) {
       throw new CustomException(ErrorCode.NOT_ROOM_CREATOR);
     }
     chatMsgRepository.deleteChatMsgByChatRoom_Id(roomId);
