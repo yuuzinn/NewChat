@@ -6,5 +6,5 @@ import project.newchat.chatmsg.domain.ChatMsg;
 
 @Repository
 public interface ChatMsgRepository extends JpaRepository<ChatMsg, Long> {
-
+  void deleteChatMsgByChatRoom_Id(Long chatRoomId);
 }

@@ -121,14 +121,15 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Override
   @Transactional
   public void outRoom(Long userId, Long roomId) {
-    Long roomCreatorId = chatRoomRepository
-        .findChatRoomIdByRoomId(roomId);
+    Optional<ChatRoom> roomCreatorId = chatRoomRepository
+        .findChatRoomById(roomId);
     // 방장이 아니라면
-    if (!Objects.equals(roomCreatorId, userId)) {
+    if (!Objects.equals(roomCreatorId.get().getRoomCreator(), userId)) {
       userChatRoomRepository.deleteUserChatRoomByUserId(userId);
       return;
     }
     // 방장이라면 방 삭제
+    chatMsgRepository.deleteChatMsgByChatRoom_Id(roomId);
     userChatRoomRepository.deleteUserChatRoomByChatRoom_Id(roomId);
     chatRoomRepository.deleteById(roomId);
   }
@@ -136,32 +137,18 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Override
   @Transactional
   public void deleteRoom(Long userId, Long roomId) {
-    Long roomCreatorId = chatRoomRepository
-        .findChatRoomIdByRoomId(roomId);
-    if (!Objects.equals(roomCreatorId, userId)) {
+    Optional<ChatRoom> roomCreatorId = chatRoomRepository
+        .findChatRoomById(roomId);
+    if (!Objects.equals(roomCreatorId.get().getRoomCreator(), userId)) {
       throw new CustomException(ErrorCode.NOT_ROOM_CREATOR);
     }
+    chatMsgRepository.deleteChatMsgByChatRoom_Id(roomId);
     userChatRoomRepository.deleteUserChatRoomByChatRoom_Id(roomId);
     chatRoomRepository.deleteById(roomId);
-    // todo : 채팅 메시지 구현 시, 방 삭제할 때 메시지도 같이 삭제되는 메서드 구현
-//    chatMsgRepository.deleteById(roomId); 방 삭제 시 채팅도 다 삭제 되어야 함.
   }
 
   // 방 조회 DTO 변환 메서드 추출
   private static List<ChatRoomDto> getChatRoomDtos(Page<ChatRoom> all) {
-//    List<ChatRoomDto> chatRoomList = new ArrayList<>();
-//
-//    for (ChatRoom list : all) {
-//      ChatRoomDto dto = ChatRoomDto.builder()
-//          .id(list.getId())
-//          .title(list.getTitle())
-//          .currentUserCount((long) list.getUserChatRooms().size())
-//          .userCountMax(list.getUserCountMax())
-//          .build();
-//
-//      chatRoomList.add(dto);
-//    }
-//    return chatRoomList;
     return all.stream()
         .map(ChatRoomDto::of)
         .collect(Collectors.toList());
