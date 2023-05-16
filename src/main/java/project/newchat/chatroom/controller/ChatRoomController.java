@@ -18,6 +18,7 @@ import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.dto.ChatRoomDto;
 import project.newchat.chatroom.service.ChatRoomService;
 import project.newchat.common.config.LoginCheck;
+import project.newchat.common.util.ResponseUtils;
 import project.newchat.userchatroom.domain.UserChatRoom;
 
 
@@ -35,8 +36,12 @@ public class ChatRoomController {
       @RequestBody @Valid ChatRoomRequest chatRoomRequest,
       HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
-    chatRoomService.createRoom(chatRoomRequest,userId);
-    return ResponseEntity.ok().body("success");
+    chatRoomService.createRoom(chatRoomRequest, userId);
+    if (userId == null) {
+      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
+    } else {
+      return ResponseUtils.ok("채팅방을 생성하였습니다.");
+    }
   }
 
   // 방의 key를 통해 입장할 수 있어야 함.
@@ -48,7 +53,11 @@ public class ChatRoomController {
       HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     chatRoomService.joinRoom(roomId, userId);
-    return ResponseEntity.ok().body("success");
+    if (userId == null) {
+      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
+    } else {
+      return ResponseUtils.ok("해당 채팅방에 입장하였습니다.");
+    }
   }
   // 전체 리스트
   @GetMapping("/room")
@@ -56,7 +65,7 @@ public class ChatRoomController {
   public ResponseEntity<Object> roomList (
       Pageable pageable) {
     List<ChatRoomDto> roomList = chatRoomService.getRoomList(pageable);
-    return ResponseEntity.ok().body(roomList);
+    return ResponseUtils.ok("전체 목록 조회에 성공하였습니다.", roomList);
   }
   // 사용자(자신)가 생성한 방 리스트 조회
   @GetMapping("/room/creator")
@@ -66,7 +75,15 @@ public class ChatRoomController {
 
     Long userId = (Long) session.getAttribute("user");
     List<ChatRoomDto> userByRoomList = chatRoomService.roomsByCreatorUser(userId, pageable);
-    return ResponseEntity.ok().body(userByRoomList);
+
+    if (userId == null) {
+      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
+    }
+    if (userByRoomList.size() == 0) {
+      return ResponseUtils.notFound("사용자(자신)가 생성한 방이 없습니다.");
+    } else {
+      return ResponseUtils.ok("사용자(자신)가 생성한 방 리스트 조회 성공", userByRoomList);
+    }
   }
   // 사용자(자신)가 들어가 있는 방 리스트 조회
   @GetMapping("/room/part")
@@ -76,7 +93,13 @@ public class ChatRoomController {
     Long userId = (Long) session.getAttribute("user");
     List<ChatRoomDto> userByRoomPartList = chatRoomService
         .getUserByRoomPartList(userId, pageable);
-    return ResponseEntity.ok().body(userByRoomPartList);
+    if (userId == null) {
+      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
+    } if (userByRoomPartList.size() == 0) {
+      return ResponseUtils.notFound("사용자(자신)가 들어가 있는 방이 없습니다.");
+    } else {
+      return ResponseUtils.ok("사용자(자신)가 들어가 있는 방 리스트 조회 성공.", userByRoomPartList);
+    }
   }
   // 채팅방 나가기
   @DeleteMapping("/room/out/{roomId}")
@@ -85,7 +108,11 @@ public class ChatRoomController {
       @PathVariable Long roomId, HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     chatRoomService.outRoom(userId, roomId);
-    return ResponseEntity.ok().body("success");
+    if (userId == null) {
+      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
+    } else {
+      return ResponseUtils.ok("채팅방을 나갔습니다.");
+    }
   }
   // 채팅방 삭제
   @DeleteMapping("/room/delete/{roomId}")
@@ -94,6 +121,10 @@ public class ChatRoomController {
       @PathVariable Long roomId, HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     chatRoomService.deleteRoom(userId, roomId);
-    return ResponseEntity.ok().body("success");
+    if (userId == null) {
+      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
+    } else {
+      return ResponseUtils.ok("채팅방을 삭제했습니다.");
+    }
   }
 }

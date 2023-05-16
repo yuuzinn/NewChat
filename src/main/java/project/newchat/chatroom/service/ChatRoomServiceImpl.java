@@ -76,6 +76,13 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     // user_chatroom 현재 인원 카운트
     Long currentUserCount = userChatRoomRepository.countByChatRoomId(roomId);
 
+    List<Long> userChatRoomByChatRoomId = userChatRoomRepository.findUserChatRoomByChatRoom_Id(
+        roomId);
+
+    if (userChatRoomByChatRoomId.contains(userId)) {
+      throw new CustomException(ErrorCode.ALREADY_JOIN_ROOM);
+    }
+
     // chatroom 입장
     if (currentUserCount >= chatRoom.getUserCountMax()) {
       throw new CustomException(ErrorCode.ROOM_USER_FULL);
