@@ -26,6 +26,7 @@ import project.newchat.userchatroom.domain.UserChatRoom;
 @RequiredArgsConstructor
 @RequestMapping("/chat")
 public class ChatRoomController {
+
   private final ChatRoomService chatRoomService;
 
   // 방을 만든 사람이 방장임.(roomCreator 지정해주기)
@@ -37,70 +38,64 @@ public class ChatRoomController {
       HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     chatRoomService.createRoom(chatRoomRequest, userId);
-    if (userId == null) {
-      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
-    } else {
-      return ResponseUtils.ok("채팅방을 생성하였습니다.");
-    }
+    return ResponseUtils.ok("채팅방을 생성하였습니다.");
   }
 
   // 방의 key를 통해 입장할 수 있어야 함.
   // 동시성 이슈 체크
   @PostMapping("/room/join/{roomId}")
   @LoginCheck
-  public ResponseEntity<Object> joinRoom (
+  public ResponseEntity<Object> joinRoom(
       @PathVariable Long roomId,
       HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     chatRoomService.joinRoom(roomId, userId);
-    if (userId == null) {
-      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
-    } else {
-      return ResponseUtils.ok("해당 채팅방에 입장하였습니다.");
-    }
+    return ResponseUtils.ok("해당 채팅방에 입장하였습니다.");
   }
+
   // 전체 리스트
   @GetMapping("/room")
   @LoginCheck
-  public ResponseEntity<Object> roomList (
+  public ResponseEntity<Object> roomList(
       Pageable pageable) {
     List<ChatRoomDto> roomList = chatRoomService.getRoomList(pageable);
-    return ResponseUtils.ok("전체 목록 조회에 성공하였습니다.", roomList);
+    if (roomList.size() == 0) {
+      return ResponseUtils.notFound("현재 생성되어 있는 채팅방이 없습니다.");
+    } else {
+      return ResponseUtils.ok("전체 목록 조회에 성공하였습니다.", roomList);
+    }
   }
+
   // 사용자(자신)가 생성한 방 리스트 조회
   @GetMapping("/room/creator")
   @LoginCheck
   public ResponseEntity<Object> getByUserRoomList(
-      HttpSession session,Pageable pageable) {
+      HttpSession session, Pageable pageable) {
 
     Long userId = (Long) session.getAttribute("user");
     List<ChatRoomDto> userByRoomList = chatRoomService.roomsByCreatorUser(userId, pageable);
-
-    if (userId == null) {
-      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
-    }
     if (userByRoomList.size() == 0) {
       return ResponseUtils.notFound("사용자(자신)가 생성한 방이 없습니다.");
     } else {
       return ResponseUtils.ok("사용자(자신)가 생성한 방 리스트 조회 성공", userByRoomList);
     }
   }
+
   // 사용자(자신)가 들어가 있는 방 리스트 조회
   @GetMapping("/room/part")
   @LoginCheck
   public ResponseEntity<Object> getByUserRoomPartList(
-      HttpSession session,Pageable pageable) {
+      HttpSession session, Pageable pageable) {
     Long userId = (Long) session.getAttribute("user");
     List<ChatRoomDto> userByRoomPartList = chatRoomService
         .getUserByRoomPartList(userId, pageable);
-    if (userId == null) {
-      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
-    } if (userByRoomPartList.size() == 0) {
+    if (userByRoomPartList.size() == 0) {
       return ResponseUtils.notFound("사용자(자신)가 들어가 있는 방이 없습니다.");
     } else {
       return ResponseUtils.ok("사용자(자신)가 들어가 있는 방 리스트 조회 성공.", userByRoomPartList);
     }
   }
+
   // 채팅방 나가기
   @DeleteMapping("/room/out/{roomId}")
   @LoginCheck
@@ -108,12 +103,9 @@ public class ChatRoomController {
       @PathVariable Long roomId, HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     chatRoomService.outRoom(userId, roomId);
-    if (userId == null) {
-      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
-    } else {
-      return ResponseUtils.ok("채팅방을 나갔습니다.");
-    }
+    return ResponseUtils.ok("채팅방을 나갔습니다.");
   }
+
   // 채팅방 삭제
   @DeleteMapping("/room/delete/{roomId}")
   @LoginCheck
@@ -121,10 +113,6 @@ public class ChatRoomController {
       @PathVariable Long roomId, HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     chatRoomService.deleteRoom(userId, roomId);
-    if (userId == null) {
-      return ResponseUtils.badRequest("로그인 후에 이용해 주세요.");
-    } else {
-      return ResponseUtils.ok("채팅방을 삭제했습니다.");
-    }
+    return ResponseUtils.ok("채팅방을 삭제했습니다.");
   }
 }
