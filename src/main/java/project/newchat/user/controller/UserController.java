@@ -23,28 +23,28 @@ import javax.validation.Valid;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @PostMapping("/signUp")
-    public ResponseEntity<Object> signUp(
-            @RequestBody @Valid UserRequest userRequest) {
-        UserDto user = userService.signUp(userRequest);
-        return ResponseUtils.ok(ResponseMessage.CREATE_USER, user);
-    }
+  @PostMapping("/signUp")
+  public ResponseEntity<Object> signUp(
+      @RequestBody @Valid UserRequest userRequest) {
+    UserDto user = userService.signUp(userRequest);
+    return ResponseUtils.ok(ResponseMessage.CREATE_USER, user);
+  }
 
-    @PostMapping("/login")
-    public ResponseEntity<Object> login(
-            @RequestBody @Valid LoginRequest userRequest,
-            HttpSession session) {
-        User login = userService.login(userRequest);
-        session.setAttribute("user", login.getId());
-        return ResponseUtils.ok(ResponseMessage.LOGIN_SUCCESS);
-    }
+  @PostMapping("/login")
+  public ResponseEntity<Object> login(
+      @RequestBody @Valid LoginRequest userRequest,
+      HttpSession session) {
+    User login = userService.login(userRequest);
+    session.setAttribute("user", login.getId());
+    return ResponseUtils.ok(ResponseMessage.LOGIN_SUCCESS);
+  }
 
-    @PostMapping("/logout")
-    @LoginCheck
-    public ResponseEntity<Object> logout(HttpSession session) {
-        session.invalidate();
-        return ResponseUtils.ok(ResponseMessage.LOGOUT_SUCCESS);
-    }
+  @PostMapping("/logout")
+  @LoginCheck
+  public ResponseEntity<Object> logout(HttpSession session) {
+    session.invalidate();
+    return ResponseUtils.ok(ResponseMessage.LOGOUT_SUCCESS);
+  }
 }

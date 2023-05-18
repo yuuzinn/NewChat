@@ -20,40 +20,40 @@ import static project.newchat.common.type.ErrorCode.INVALID_REQUEST;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(CustomException.class)
-    public ErrorResponse handleCustomException(CustomException e) {
-        log.error("{} 가 발생하였습니다.", e.getErrorCode());
+  @ExceptionHandler(CustomException.class)
+  public ErrorResponse handleCustomException(CustomException e) {
+    log.error("{} 가 발생하였습니다.", e.getErrorCode());
 
-        return new ErrorResponse(e.getErrorCode(), e.getErrorMessage());
+    return new ErrorResponse(e.getErrorCode(), e.getErrorMessage());
+  }
+
+  //유효성
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    log.error("유효한 값이 아닙니다.", e);
+    List<FieldError> fieldError = e.getFieldErrors();
+    Map<String, String> bindingResult = new HashMap<>();
+    for (FieldError error : fieldError) {
+      bindingResult.put(error.getField(), error.getDefaultMessage());
     }
+    return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getDescription(), bindingResult);
+  }
 
-    //유효성
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.error("유효한 값이 아닙니다.", e);
-        List<FieldError> fieldError = e.getFieldErrors();
-        Map<String,String> bindingResult =new HashMap<>();
-        for (FieldError error : fieldError) {
-            bindingResult.put(error.getField(),error.getDefaultMessage());
-        }
-        return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getDescription(),bindingResult);
-    }
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    log.error("잘못된 DATA 바인딩입니다. DATA가 잘못되었습니다.", e);
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        log.error("잘못된 DATA 바인딩입니다. DATA가 잘못되었습니다.", e);
+    return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getDescription());
+  }
 
-        return new ErrorResponse(INVALID_REQUEST, INVALID_REQUEST.getDescription());
-    }
+  @ExceptionHandler(Exception.class)
+  public ErrorResponse handleException(Exception e) {
+    log.error("오류가 발생하였습니다.", e);
 
-    @ExceptionHandler(Exception.class)
-    public ErrorResponse handleException(Exception e) {
-        log.error("오류가 발생하였습니다.", e);
-
-        return new ErrorResponse(
-                INTERNAL_SERVER_ERROR,
-                INTERNAL_SERVER_ERROR.getDescription()
-        );
-    }
+    return new ErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        INTERNAL_SERVER_ERROR.getDescription()
+    );
+  }
 
 }
