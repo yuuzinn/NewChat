@@ -39,6 +39,7 @@
 - Gradle
 - MySQL
 - Web Socket
+- Redis
 
 # API 💻
 
