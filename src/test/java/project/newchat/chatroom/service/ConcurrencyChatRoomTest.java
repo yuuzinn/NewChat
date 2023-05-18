@@ -13,12 +13,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.repository.ChatRoomRepository;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.UserRequest;
-import project.newchat.user.dto.UserDto;
 import project.newchat.user.service.UserService;
 import project.newchat.userchatroom.repository.UserChatRoomRepository;
 
@@ -41,6 +39,7 @@ public class ConcurrencyChatRoomTest {
 
   @Autowired
   private UserChatRoomRepository userChatRoomRepository;
+
   @Autowired
   private ChatRoomRepository chatRoomRepository;
 
@@ -64,11 +63,10 @@ public class ConcurrencyChatRoomTest {
 
     IntStream.range(0, 30).forEach(e -> executorService.submit(() -> {
       try {
-        // 테스트할코드
         try {
           chatRoomService.joinRoom(save.getId(), users.get(e).getId());
         } catch (Exception ex) {
-          ex.printStackTrace();
+          assertThat(ex).isNull(); // 예외 발생 시 테스트를 실패로 처리
         }
       } finally {
         countDownLatch.countDown();
