@@ -75,10 +75,6 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     List<WebSocketSession> roomSessions = chatRooms.get(roomId);
     if (roomSessions != null) {
       roomSessions.remove(session);
-//      if (roomSessions.isEmpty()) {
-//        // 채팅방에 세션이 더 이상 없으면 채팅방 정보를 삭제를 해야할지..
-//        chatRooms.remove(roomId);
-//      }
     }
     log.info(session + "의 클라이언트 접속 해제");
   }
@@ -94,10 +90,14 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     Long roomId = null;
     String uri = Objects.requireNonNull(session.getUri()).toString();
     String[] uriParts = uri.split("/");
-    // EX_URL) /chat/room/{roomId} 일 때 roomId 추출
-    // 늘어난다면 수 변경해주면.. (일단 임시로 설정)
-    if (uriParts.length >= 3 && uriParts[2].equals("room")) {
-      roomId = Long.valueOf(uriParts[3]);
+    // /chat/msg/{roomId} 일 때 roomId 추출
+    if (uriParts.length >= 4 && uriParts[2].equals("msg")) {
+      return Long.valueOf(uriParts[3]);
+    }
+    // /chat/room/join/{roomId}, /chat/room/out/{roomId}, /chat/room/delete/{roomId} 일 때 roomId 추출
+    if (uriParts.length >= 5 && uriParts[2].equals("room") &&
+        (uriParts[3].equals("join") || uriParts[3].equals("out") || uriParts[3].equals("delete"))) {
+      roomId = Long.valueOf(uriParts[4]);
     }
     return roomId;
   }
