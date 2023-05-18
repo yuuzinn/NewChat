@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.newchat.common.config.LoginCheck;
+import project.newchat.common.type.ResponseMessage;
 import project.newchat.common.util.ResponseUtils;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.LoginRequest;
@@ -28,7 +29,7 @@ public class UserController {
     public ResponseEntity<Object> signUp(
             @RequestBody @Valid UserRequest userRequest) {
         UserDto user = userService.signUp(userRequest);
-        return ResponseUtils.ok("회원가입 성공", user);
+        return ResponseUtils.ok(ResponseMessage.CREATE_USER, user);
     }
 
     @PostMapping("/login")
@@ -37,13 +38,13 @@ public class UserController {
             HttpSession session) {
         User login = userService.login(userRequest);
         session.setAttribute("user", login.getId());
-        return ResponseEntity.ok().body("로그인 성공");
+        return ResponseUtils.ok(ResponseMessage.LOGIN_SUCCESS);
     }
 
     @PostMapping("/logout")
     @LoginCheck
     public ResponseEntity<Object> logout(HttpSession session) {
         session.invalidate();
-        return ResponseEntity.ok().body("로그아웃 성공");
+        return ResponseUtils.ok(ResponseMessage.LOGOUT_SUCCESS);
     }
 }

@@ -18,6 +18,7 @@ import project.newchat.chatmsg.domain.response.ChatMsgResponse;
 import project.newchat.chatmsg.dto.ChatMsgDto;
 import project.newchat.chatmsg.service.ChatMsgService;
 import project.newchat.common.config.LoginCheck;
+import project.newchat.common.type.ResponseMessage;
 import project.newchat.common.util.ResponseUtils;
 
 @RestController
@@ -35,11 +36,7 @@ public class ChatMsgController {
       HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     ChatMsgResponse response = chatMsgService.sendMessage(message, userId, roomId);
-    if (message == null) {
-      return ResponseUtils.badRequest("채팅 메시지는 공백으로 보낼 수 없습니다.");
-    } else {
-      return ResponseUtils.ok("채팅 메시지 보내기 성공", response);
-    }
+      return ResponseUtils.ok(ResponseMessage.SEND_CHAT_MSG_SUCCESS, response);
   }
 
   @GetMapping("/msg/{roomId}")
@@ -51,9 +48,11 @@ public class ChatMsgController {
     Long userId = (Long) session.getAttribute("user");
     List<ChatMsgDto> roomChatMsgList = chatMsgService.getRoomChatMsgList(roomId, userId, lastId);
     if (roomChatMsgList != null) {
-      return ResponseUtils.ok("해당 채팅방의 메시지들을 조회하였습니다.", roomChatMsgList);
+      return ResponseUtils
+          .ok(ResponseMessage.CHAT_ROOM_MSG_LIST_SELECT_SUCCESS, roomChatMsgList);
     } else {
-      return ResponseUtils.notFound("해당 채팅방의 메시지들을 찾지 못했습니다.");
+      return ResponseUtils
+          .notFound(ResponseMessage.NOT_EXIST_CHAT_ROOM_MSG_LIST);
     }
   }
 }
