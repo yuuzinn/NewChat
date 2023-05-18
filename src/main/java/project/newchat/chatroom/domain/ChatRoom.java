@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.newchat.chatmsg.domain.ChatMsg;
 import project.newchat.user.domain.User;
+import project.newchat.userchatroom.domain.UserChatRoom;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -24,14 +25,31 @@ public class ChatRoom {
 
     private String title;
 
-    private boolean isMaster;
-
     private LocalDateTime createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "chat_room", fetch = FetchType.LAZY)
+    private Long roomCreator;
+
+    private Integer userCountMax; // 최대 인원 8명
+
+
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
+    private List<UserChatRoom> userChatRooms;
+
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<ChatMsg> chatMsgs;
+
+    @Override
+    public String toString() {
+        return "ChatRoom{" +
+            "id=" + id +
+            ", title='" + title + '\'' +
+            ", createdAt=" + createdAt +
+            ", updatedAt=" + updatedAt +
+            ", roomCreator=" + roomCreator +
+            ", userCountMax=" + userCountMax +
+            ", userChatRooms=" + userChatRooms.size() +
+            '}';
+    }
 }

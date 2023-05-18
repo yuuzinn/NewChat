@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.newchat.chatmsg.domain.ChatMsg;
 import project.newchat.chatroom.domain.ChatRoom;
+import project.newchat.userchatroom.domain.UserChatRoom;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -16,20 +18,26 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
 
-    private String email;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "user_id")
+  private Long id;
 
-    private String password;
+  @Column(unique = true)
+  private String email;
 
-    private String nickname;
+  private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<ChatRoom> chatRooms;
+  private String nickname;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<ChatMsg> chatMsgs;
+  private LocalDateTime createdAt;
+
+  private LocalDateTime updatedAt;
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private List<UserChatRoom> userChatRooms;
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private List<ChatMsg> chatMsgs;
 }
