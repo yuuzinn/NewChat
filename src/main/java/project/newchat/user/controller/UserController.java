@@ -20,7 +20,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("/chat/user")
 public class UserController {
 
   private final UserService userService;
