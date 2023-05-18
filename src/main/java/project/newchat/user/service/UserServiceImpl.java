@@ -17,52 +17,40 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    @Override
-    public UserDto signUp(UserRequest user) {
-        Optional<User> email = userRepository.findByEmail(user.getEmail());
-        if (email.isPresent()) {
-            throw new CustomException(ErrorCode.ALREADY_USER_ID, user.getEmail());
-        }
-        User userSave = User.builder()
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .nickname(user.getNickname())
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        UserDto userDto = UserDto.builder()
-            .email(userSave.getEmail())
-            .nickname(userSave.getNickname())
-            .build();
-        userRepository.save(userSave);
-        return userDto;
+  @Override
+  public UserDto signUp(UserRequest user) {
+    Optional<User> email = userRepository.findByEmail(user.getEmail());
+    if (email.isPresent()) {
+      throw new CustomException(ErrorCode.ALREADY_USER_ID, user.getEmail());
     }
+    User userSave = User.builder().email(user.getEmail()).password(user.getPassword())
+        .nickname(user.getNickname()).createdAt(LocalDateTime.now()).build();
 
-    @Override
-    public User signUpTest(UserRequest user) {
-        Optional<User> email = userRepository.findByEmail(user.getEmail());
-        if (email.isPresent()) {
-            throw new CustomException(ErrorCode.ALREADY_USER_ID, user.getEmail());
-        }
-        User userSave = User.builder()
-            .email(user.getEmail())
-            .password(user.getPassword())
-            .nickname(user.getNickname())
-            .createdAt(LocalDateTime.now())
-            .build();
+    UserDto userDto = UserDto.builder().email(userSave.getEmail()).nickname(userSave.getNickname())
+        .build();
+    userRepository.save(userSave);
+    return userDto;
+  }
 
-
-        return userRepository.save(userSave);
+  @Override
+  public User signUpTest(UserRequest user) {
+    Optional<User> email = userRepository.findByEmail(user.getEmail());
+    if (email.isPresent()) {
+      throw new CustomException(ErrorCode.ALREADY_USER_ID, user.getEmail());
     }
+    User userSave = User.builder().email(user.getEmail()).password(user.getPassword())
+        .nickname(user.getNickname()).createdAt(LocalDateTime.now()).build();
 
-    @Override
-    public User login(LoginRequest user) {
-        return userRepository.findUserByEmailAndPassword(user.getEmail(), user.getPassword())
-                .orElseThrow(() ->
-                        new CustomException(ErrorCode.INCONSISTENCY_USER_ID_PASSWORD));
-    }
+    return userRepository.save(userSave);
+  }
+
+  @Override
+  public User login(LoginRequest user) {
+    return userRepository.findUserByEmailAndPassword(user.getEmail(), user.getPassword())
+        .orElseThrow(() -> new CustomException(ErrorCode.INCONSISTENCY_USER_ID_PASSWORD));
+  }
 
 
 }

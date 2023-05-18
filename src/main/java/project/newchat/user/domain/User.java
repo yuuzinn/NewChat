@@ -18,25 +18,26 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
 
-    @Column(unique = true)
-    private String email;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "user_id")
+  private Long id;
 
-    private String password;
+  @Column(unique = true)
+  private String email;
 
-    private String nickname;
+  private String password;
 
-    private LocalDateTime createdAt;
+  private String nickname;
 
-    private LocalDateTime updatedAt;
+  private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<UserChatRoom> userChatRooms;
+  private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<ChatMsg> chatMsgs;
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private List<UserChatRoom> userChatRooms;
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private List<ChatMsg> chatMsgs;
 }

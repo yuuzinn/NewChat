@@ -41,8 +41,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Transactional
   public void createRoom(ChatRoomRequest chatRoomRequest, Long userId) {
     // 유저정보조회
-    User findUser = userRepository.findById(userId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));//
+    User findUser = getFindUser(userId);
     // chatroom 생성
     ChatRoom chatRoom = ChatRoom.builder()
         .roomCreator(findUser.getId())
@@ -66,8 +65,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Transactional
   public void joinRoom(Long roomId, Long userId) {
     // 유저 조회
-    User findUser = userRepository.findById(userId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+    User findUser = getFindUser(userId);
 
     // room 조회
     ChatRoom chatRoom = chatRoomRepository.findById(roomId)
@@ -95,35 +93,34 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     userChatRoomRepository.save(userChatRoom);
 
   }
+
   // 채팅방 전체 조회
+
   @Override
   @Transactional
   public List<ChatRoomDto> getRoomList(Pageable pageable) {
     Page<ChatRoom> all = chatRoomRepository.findAll(pageable);
     return getChatRoomDtos(all);
   }
-
   // 자신이 생성한 방 리스트 조회
+
   @Override
   public List<ChatRoomDto> roomsByCreatorUser(Long userId, Pageable pageable) {
-    Page<ChatRoom> all = chatRoomRepository.findAllByUserId(userId, pageable);
-    return getChatRoomDtos(all);
+    Page<ChatRoom> userCreateAll = chatRoomRepository.findAllByUserId(userId, pageable);
+    return getChatRoomDtos(userCreateAll);
   }
-
   // 자신이 참여한 방 리스트 조회
+
   @Override
   public List<ChatRoomDto> getUserByRoomPartList(Long userId, Pageable pageable) {
-    Page<ChatRoom> allByUserIdAndUserChatRooms = chatRoomRepository
+    Page<ChatRoom> userPartAll = chatRoomRepository
         .findAllByUserChatRoomsUserId(userId, pageable);
-    return getChatRoomDtos(allByUserIdAndUserChatRooms);
+    return getChatRoomDtos(userPartAll);
   }
-
   @Override
   @Transactional
   public void outRoom(Long userId, Long roomId) {
-    ChatRoom room = chatRoomRepository
-        .findChatRoomById(roomId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NONE_ROOM));
+    ChatRoom room = getChatRoom(roomId);
     // 방장이 아니라면
     if (!Objects.equals(room.getRoomCreator(), userId)) {
       userChatRoomRepository.deleteUserChatRoomByUserId(userId);
@@ -138,15 +135,26 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Override
   @Transactional
   public void deleteRoom(Long userId, Long roomId) {
-    ChatRoom room = chatRoomRepository
-        .findChatRoomById(roomId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NONE_ROOM));
+    ChatRoom room = getChatRoom(roomId);
     if (!Objects.equals(room.getRoomCreator(), userId)) {
       throw new CustomException(ErrorCode.NOT_ROOM_CREATOR);
     }
     chatMsgRepository.deleteChatMsgByChatRoom_Id(roomId);
     userChatRoomRepository.deleteUserChatRoomByChatRoom_Id(roomId);
     chatRoomRepository.deleteById(roomId);
+  }
+
+  private User getFindUser(Long userId) {
+    User findUser = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+    return findUser;
+  }
+
+  private ChatRoom getChatRoom(Long roomId) {
+    ChatRoom room = chatRoomRepository
+        .findChatRoomById(roomId)
+        .orElseThrow(() -> new CustomException(ErrorCode.NONE_ROOM));
+    return room;
   }
 
   // 방 조회 DTO 변환 메서드 추출

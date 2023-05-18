@@ -18,7 +18,6 @@ public interface UserChatRoomRepository extends JpaRepository<UserChatRoom, Long
   @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "1000")})
   Long countByChatRoomId(Long roomId); // 비관적 락
 
-//  @Query("select count(*) from UserChatRoom u where u.chatRoom.id = ?1 ")
   @Query("select count(*) from UserChatRoom u where u.chatRoom.id = :roomId")
   Long countNonLockByChatRoomId(@Param("roomId")Long roomId); // test 용도
 
