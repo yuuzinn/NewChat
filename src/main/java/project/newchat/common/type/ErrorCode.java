@@ -19,7 +19,9 @@ public enum ErrorCode {
   CHAT_ERROR("채팅이 전송에 오류가 있습니다."),
   NOT_ROOM_CREATOR("방 생성자가 아닙니다."),
   NOT_EXIST_CLIENT("채팅방에 클라이언트가 없습니다."),
-  ALREADY_JOIN_ROOM("이미 채팅방에 입장해 있습니다.");
+  ALREADY_JOIN_ROOM("이미 채팅방에 입장해 있습니다."),
+  FAILED_GET_LOCK("락을 획득하지 못했습니다.")
+  ;
 
   private final String description;
 }
