@@ -31,6 +31,10 @@
 
 
 ![version1 drawio (1)](https://user-images.githubusercontent.com/119172260/235178812-62b8b029-537b-4670-a387-cb2bd3b7432c.png)
+# Architecture ver 2.0 (~ing)
+
+![image](https://github.com/yeb0/NewChat/assets/119172260/aa8a9a1a-1ef4-4311-b699-4e39ab8d8ec5)
+
 
 
 # Stack ⚒️
@@ -40,6 +44,7 @@
 - MySQL
 - Web Socket
 - Redis
+- Nginx
 
 # API 💻
 
