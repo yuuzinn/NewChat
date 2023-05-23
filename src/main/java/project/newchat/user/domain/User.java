@@ -1,11 +1,11 @@
 package project.newchat.user.domain;
 
+import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.newchat.chatmsg.domain.ChatMsg;
-import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.userchatroom.domain.UserChatRoom;
 
 import javax.persistence.*;
@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
