@@ -11,6 +11,7 @@ import project.newchat.common.type.ResponseMessage;
 import project.newchat.common.util.ResponseUtils;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.LoginRequest;
+import project.newchat.user.domain.request.TestUserRequest;
 import project.newchat.user.domain.request.UserRequest;
 import project.newchat.user.dto.UserDto;
 import project.newchat.user.service.UserService;
@@ -29,6 +30,13 @@ public class UserController {
   public ResponseEntity<Object> signUp(
       @RequestBody @Valid UserRequest userRequest) {
     UserDto user = userService.signUp(userRequest);
+    return ResponseUtils.ok(ResponseMessage.CREATE_USER, user);
+  }
+
+  @PostMapping("/signUp2") // 서버 터트리기 테스트
+  public ResponseEntity<Object> signUpTest(
+      @RequestBody @Valid TestUserRequest userRequest) {
+    UserDto user = userService.signUpTe2(userRequest);
     return ResponseUtils.ok(ResponseMessage.CREATE_USER, user);
   }
 
