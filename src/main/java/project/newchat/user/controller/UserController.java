@@ -2,6 +2,7 @@ package project.newchat.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import project.newchat.common.util.ResponseUtils;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.LoginRequest;
 import project.newchat.user.domain.request.TestUserRequest;
+import project.newchat.user.domain.request.UpdateRequest;
 import project.newchat.user.domain.request.UserRequest;
 import project.newchat.user.dto.UserDto;
 import project.newchat.user.service.UserService;
@@ -54,5 +56,15 @@ public class UserController {
   public ResponseEntity<Object> logout(HttpSession session) {
     session.invalidate();
     return ResponseUtils.ok(ResponseMessage.LOGOUT_SUCCESS);
+  }
+
+  @PatchMapping("/update")
+  @LoginCheck
+  public ResponseEntity<Object> update(
+      @RequestBody @Valid UpdateRequest updateRequest,
+      HttpSession session) {
+    Long userId = (Long) session.getAttribute("user");
+    userService.update(userId, updateRequest);
+    return ResponseUtils.ok(ResponseMessage.USER_UPDATE_SUCCESS);
   }
 }

@@ -3,6 +3,7 @@ package project.newchat.chatroom.service;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
+import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
 import project.newchat.chatroom.dto.ChatRoomDto;
 
 public interface ChatRoomService {
@@ -22,4 +23,6 @@ public interface ChatRoomService {
   void outRoom(Long userId, Long roomId);
 
   void deleteRoom(Long userId, Long roomId);
+
+  void updateRoom(Long roomId, ChatRoomUpdateRequest chatRoomUpdateRequest, Long userId);
 }
