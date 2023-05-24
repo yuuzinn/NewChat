@@ -10,6 +10,8 @@ public enum ErrorCode {
   INVALID_REQUEST("잘못된 요청입니다."),
   INTERNAL_SERVER_ERROR("서버 오류입니다."),
   ALREADY_USER_ID("중복된 아이디입니다."),
+  REQUEST_SAME_AS_CURRENT_NICKNAME("현재 닉네임과 바꾸려는 닉네임이 같습니다."),
+  REQUEST_SAME_AS_CURRENT_TITLE("현재 제목과 바꾸려는 제목이 같습니다."),
   INCONSISTENCY_USER_ID_PASSWORD("아이디와 비밀번호 불일치"),
   NOT_LOGIN("로그인이 되어 있지 않습니다."),
   NOT_FOUND_USER("유저를 찾을 수 없습니다."),

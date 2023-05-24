@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import project.newchat.chatmsg.repository.ChatMsgRepository;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
+import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
 import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.dto.ChatRoomDto;
 import project.newchat.chatroom.repository.ChatRoomRepository;
@@ -157,6 +158,20 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     chatMsgRepository.deleteChatMsgByChatRoom_Id(roomId);
     userChatRoomRepository.deleteUserChatRoomByChatRoom_Id(roomId);
     chatRoomRepository.deleteById(roomId);
+  }
+
+  @Override
+  public void updateRoom(Long roomId, ChatRoomUpdateRequest chatRoomUpdateRequest, Long userId) {
+    ChatRoom room = getChatRoom(roomId);
+    String currentRoomTitle = room.getTitle();
+    if (!room.getRoomCreator().equals(userId)) {
+      throw new CustomException(ErrorCode.NOT_ROOM_CREATOR);
+    }
+    if (currentRoomTitle.equals(chatRoomUpdateRequest.getTitle())) {
+      throw new CustomException(ErrorCode.REQUEST_SAME_AS_CURRENT_TITLE);
+    }
+    room.update(chatRoomUpdateRequest.getTitle(), LocalDateTime.now());
+    chatRoomRepository.save(room);
   }
 
   private User getFindUser(Long userId) {
