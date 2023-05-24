@@ -92,18 +92,18 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User login(LoginRequest user) {
-    String requestPassword = user.getPassword(); // 1244
-    Optional<User> email = userRepository.findByEmail(user.getEmail());// db pw
-    if (!email.isPresent()) {
-      throw new CustomException(ErrorCode.NOT_FOUND_USER, user.getEmail());
+  public User login(LoginRequest request) {
+    String requestPassword = request.getPassword(); // 1244
+    Optional<User> user = userRepository.findByEmail(request.getEmail());// db pw
+    if (!user.isPresent()) {
+      throw new CustomException(ErrorCode.NOT_FOUND_USER, request.getEmail());
     }
-    String dbPassword = email.get().getPassword();
+    String dbPassword = user.get().getPassword();
     boolean samePassword = isSamePassword(requestPassword, dbPassword);
     if (!samePassword) {
       throw new CustomException(ErrorCode.NOT_SAME_PASSWORD);
     }
-    return userRepository.findUserByEmailAndPassword(user.getEmail(), dbPassword).orElseThrow();
+    return userRepository.findUserByEmailAndPassword(request.getEmail(), dbPassword).orElseThrow();
   }
 
   @Override
