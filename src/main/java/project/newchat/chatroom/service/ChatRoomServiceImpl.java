@@ -66,7 +66,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   }
 
   @Override
-  @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+//  @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+  @Transactional
   public void joinRoom(Long roomId, Long userId) {
     RLock lock = redissonClient.getLock("joinRoomLock:" + roomId);
     try {

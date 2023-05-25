@@ -52,9 +52,6 @@ public class UserServiceImpl implements UserService {
   public UserDto signUpTe2(TestUserRequest user) {
     String randomEmail = generateRandomEmail(); // 랜덤 이메일 생성
     Optional<User> email = userRepository.findByEmail(randomEmail);
-//    if (email.isPresent()) {
-//      throw new CustomException(ErrorCode.ALREADY_USER_ID, randomEmail);
-//    }
     User userSave = User.builder().email(randomEmail).password(user.getPassword())
         .nickname(user.getNickname()).createdAt(LocalDateTime.now()).build();
 
@@ -63,17 +60,17 @@ public class UserServiceImpl implements UserService {
     userRepository.save(userSave);
     return userDto;
   }
+  private final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz1234567890"; // 이메일에 사용할 문자
 
   private String generateRandomEmail() {
     Random rd = new Random();
     String domain = "example.com"; // 이메일 도메인
-    String characters = "abcdefghijklmnopqrstuvwxyz1234567890"; // 이메일에 사용할 문자
     int length = 10; // 이메일 길이
 
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < length; i++) {
-      int index = rd.nextInt(characters.length());
-      sb.append(characters.charAt(index));
+      int index = rd.nextInt(CHARACTERS.length());
+      sb.append(CHARACTERS.charAt(index));
     }
 
     return sb.toString() + "@" + domain;
@@ -99,8 +96,7 @@ public class UserServiceImpl implements UserService {
       throw new CustomException(ErrorCode.NOT_FOUND_USER, request.getEmail());
     }
     String dbPassword = user.get().getPassword();
-    boolean samePassword = isSamePassword(requestPassword, dbPassword);
-    if (!samePassword) {
+    if (!isSamePassword(requestPassword, dbPassword)) {
       throw new CustomException(ErrorCode.NOT_SAME_PASSWORD);
     }
     return userRepository.findUserByEmailAndPassword(request.getEmail(), dbPassword).orElseThrow();
