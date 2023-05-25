@@ -8,12 +8,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
+import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
 import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.dto.ChatRoomDto;
 import project.newchat.chatroom.service.ChatRoomService;
@@ -100,6 +102,17 @@ public class ChatRoomController {
       return ResponseUtils
           .ok(ResponseMessage.CHAT_ROOM_USER_SELF_PART_BY_LIST_SELECT_SUCCESS, userByRoomPartList);
     }
+  }
+
+  @PatchMapping("/room/update/{roomId}")
+  @LoginCheck
+  public ResponseEntity<Object> updateRoom(
+      @PathVariable Long roomId,
+      @RequestBody @Valid ChatRoomUpdateRequest chatRoomUpdateRequest,
+      HttpSession session) {
+    Long userId = (Long) session.getAttribute("user");
+    chatRoomService.updateRoom(roomId, chatRoomUpdateRequest, userId);
+    return ResponseUtils.ok(ResponseMessage.ROOM_UPDATE_SUCCESS);
   }
 
   // 채팅방 나가기

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.newchat.chatmsg.domain.ChatMsg;
 import project.newchat.user.domain.User;
 import project.newchat.userchatroom.domain.UserChatRoom;
@@ -15,6 +16,7 @@ import java.util.List;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoom {
@@ -51,5 +53,9 @@ public class ChatRoom {
             ", userCountMax=" + userCountMax +
             ", userChatRooms=" + userChatRooms.size() +
             '}';
+    }
+    public void update(String title, LocalDateTime updatedAt) {
+        this.setTitle(title);
+        this.setUpdatedAt(updatedAt);
     }
 }

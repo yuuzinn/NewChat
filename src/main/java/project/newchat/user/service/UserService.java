@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.LoginRequest;
 import project.newchat.user.domain.request.TestUserRequest;
+import project.newchat.user.domain.request.UpdateRequest;
 import project.newchat.user.domain.request.UserRequest;
 
 import javax.servlet.http.HttpSession;
@@ -21,4 +22,5 @@ public interface UserService {
   User login(LoginRequest user);
 
 
+  void update(Long userId, UpdateRequest updateRequest);
 }

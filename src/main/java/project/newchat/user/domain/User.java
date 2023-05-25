@@ -1,10 +1,10 @@
 package project.newchat.user.domain;
 
-import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.newchat.chatmsg.domain.ChatMsg;
 import project.newchat.userchatroom.domain.UserChatRoom;
 
@@ -14,10 +14,11 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements Serializable {
+public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,4 +41,8 @@ public class User implements Serializable {
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<ChatMsg> chatMsgs;
+  public void update(String nickname, LocalDateTime updatedAt) {
+    this.setNickname(nickname);
+    this.setUpdatedAt(updatedAt);
+  }
 }
