@@ -23,7 +23,9 @@ public enum ErrorCode {
   NOT_EXIST_CLIENT("채팅방에 클라이언트가 없습니다."),
   ALREADY_JOIN_ROOM("이미 채팅방에 입장해 있습니다."),
   FAILED_GET_LOCK("락을 획득하지 못했습니다."),
-  NOT_SAME_PASSWORD("비밀번호 불일치")
+  NOT_SAME_PASSWORD("비밀번호 불일치"),
+  ALREADY_FRIEND("이미 친구요청을 보냈거나, 친구인 상태입니다."),
+  NOT_FOUND_FRIEND_USER("친구요청을 받은 사용자를 찾을 수 없습니다.")
   ;
 
   private final String description;
