@@ -10,4 +10,5 @@ public interface FriendService {
 
   void refuseFriend(Long toUserId, Long myUserId);
 
+  Long getCurrentFriendNum(Long userId);
 }
