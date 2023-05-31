@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,8 @@ class FriendServiceImplTest {
   @Autowired
   private FriendRepository friendRepository;
 
+  @Autowired
+  private UserService userService;
   @Test
   @DisplayName("이미 친구신청한 상태이거나 친구인 상태일 경우")
   void already_friend_failed() {
@@ -64,5 +68,22 @@ class FriendServiceImplTest {
     assertThrows(CustomException.class, () -> {
       friendService.addFriend(2L, 1L);
     });
+  }
+  @Test
+  @DisplayName("친구목록 50명 다 찬 상태에서 친구신청하는 경우")
+  void addFriendMax_failed () {
+    List<User> users = new ArrayList<>();
+
+    assertThrows(CustomException.class, () -> {
+      for (int i = 0; i < 55; i++) {
+        UserRequest user = new UserRequest(i + "아이디", "12345", "test");
+        User user1 = userService.signUpTest(user);
+        users.add(user1);
+        friendService.addFriend((i+1L), 1L);
+      }
+    });
+
+    Long currentFriendNum = friendService.getCurrentFriendNum(1L);
+    assertEquals(currentFriendNum, 50);
   }
 }
