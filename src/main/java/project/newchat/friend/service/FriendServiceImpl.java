@@ -140,7 +140,7 @@ public class FriendServiceImpl implements FriendService {
     Optional<Friend> friend = friendRepository
         .findByUserIdAndToUserId(toUserId, myUserId);
 
-    if (me.isPresent() || friend.isPresent()) {
+    if (!me.isPresent() || !friend.isPresent()) {
       throw new CustomException(NOT_FOUND_USER);
     }
 
