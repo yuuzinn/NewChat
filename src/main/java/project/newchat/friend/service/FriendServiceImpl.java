@@ -60,6 +60,10 @@ public class FriendServiceImpl implements FriendService {
   @Transactional
   public void receiveFriend(Long toUserId, Long myUserId) {
     findUser(toUserId, myUserId);
+    Long currentFriendNum = getCurrentFriendNum(myUserId);
+    if (currentFriendNum >= 50) {
+      throw new CustomException(ErrorCode.FRIEND_LIST_IS_FULL);
+    }
     Friend receiver = friendRepository // 2,   1,  false
         .findByUserIdAndToUserIdAndIsFriend(myUserId, toUserId, false)
         .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
