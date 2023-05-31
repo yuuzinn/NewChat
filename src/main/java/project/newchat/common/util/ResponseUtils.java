@@ -31,4 +31,12 @@ public class ResponseUtils {
     response.put("message", message);
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
   }
+
+  public static ResponseEntity<Object> badRequest(ResponseMessage message) {
+    Map<String, Object> response = new LinkedHashMap<>();
+    response.put("isSuccess", false);
+    response.put("status", HttpStatus.BAD_REQUEST.value());
+    response.put("message", message);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+  }
 }
