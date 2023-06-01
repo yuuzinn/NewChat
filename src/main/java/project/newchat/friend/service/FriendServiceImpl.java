@@ -94,10 +94,10 @@ public class FriendServiceImpl implements FriendService {
   @Transactional
   public void refuseFriend(Long toUserId, Long myUserId) {
     findUser(toUserId, myUserId);
-    Friend mySelf = friendRepository.findByUserIdAndToUserIdAndIsFriend(
+    Friend friendSelf = friendRepository.findByUserIdAndToUserIdAndIsFriend(
             toUserId, myUserId, true)
         .orElseThrow(() -> new CustomException(NOT_FOUND_RECEIVE_FRIEND_USER));
-    Friend friendSelf = friendRepository.findByUserIdAndToUserIdAndIsFriend(
+    Friend mySelf = friendRepository.findByUserIdAndToUserIdAndIsFriend(
             myUserId, toUserId, false)
         .orElseThrow(() -> new CustomException(NOT_FOUND_RECEIVE_FRIEND_USER));
     friendRepository.deleteById(mySelf.getId());
