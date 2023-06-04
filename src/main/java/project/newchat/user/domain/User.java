@@ -43,8 +43,11 @@ public class User {
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<ChatMsg> chatMsgs;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-  private List<Friend> friends;
+//  @OneToMany(mappedBy = "fromUser", fetch = FetchType.LAZY)
+//  private List<Friend> fromUsers;
+//
+//  @OneToMany(mappedBy = "toUser", fetch = FetchType.LAZY)
+//  private List<Friend> toUsers;
 
   public void update(String nickname, LocalDateTime updatedAt) {
     this.setNickname(nickname);

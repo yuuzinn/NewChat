@@ -24,7 +24,8 @@ public enum ErrorCode {
   ALREADY_JOIN_ROOM("이미 채팅방에 입장해 있습니다."),
   FAILED_GET_LOCK("락을 획득하지 못했습니다."),
   NOT_SAME_PASSWORD("비밀번호 불일치"),
-  ALREADY_FRIEND("친구 요청을 보낸 상태이거나 친구인 상태입니다."),
+  ALREADY_FRIEND("이미 친구인 상태입니다."),
+  ALREADY_REQUEST_FRIEND("이미 친구요청을 보낸 상태입니다."),
   NEEDFUL_FRIEND_RECEIVE("요청에 대한 응답을 해 주어야 합니다."),
   NOT_FOUND_RECEIVE_FRIEND_USER("친구요청을 받은 사용자를 찾을 수 없습니다."),
   FRIEND_LIST_IS_FULL("친구 목록이 꽉 차 있습니다.")
