@@ -28,7 +28,7 @@ public enum ErrorCode {
   ALREADY_REQUEST_FRIEND("이미 친구요청을 보낸 상태입니다."),
   NEEDFUL_FRIEND_RECEIVE("요청에 대한 응답을 해 주어야 합니다."),
   NOT_FOUND_RECEIVE_FRIEND_USER("친구요청을 받은 사용자를 찾을 수 없습니다."),
-  FRIEND_LIST_IS_FULL("친구 목록이 꽉 차 있습니다.")
+  FRIEND_LIST_IS_FULL("친구 목록이 꽉 차 있습니다."),
   ;
 
   private final String description;
