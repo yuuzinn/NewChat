@@ -43,7 +43,7 @@ public class ConcurrencyFriendReceiveTest {
 
   @Test
   @DisplayName("친구요청 수락 시 친구 수 증가, 50명 제한")
-  void joinRoom_lock_success() throws InterruptedException {
+  void friend_receive_success() throws InterruptedException {
     List<User> users = new ArrayList<>();
     for (int i = 0; i < 70; i++) {
       UserRequest user = new UserRequest(i + "아이디", "12345", "test");
