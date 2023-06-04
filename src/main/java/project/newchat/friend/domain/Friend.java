@@ -27,11 +27,9 @@ public class Friend {
   @Column(name = "friend_id")
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user; // 사용자(자신)
+  private Long fromUserId; // 친구 요청자
 
-  private Long toUserId; // 상대방
+  private Long toUserId; // 응답자
 
-  private Boolean isFriend; // 친구인지 판별
+  private Boolean accept; // 친구인지 판별
 }

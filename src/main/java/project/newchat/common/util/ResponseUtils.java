@@ -16,6 +16,18 @@ public class ResponseUtils {
     return ResponseEntity.ok(response);
   }
 
+  public static ResponseEntity<Object> friendSelectOk(
+      ResponseMessage message, Object result, Long currentNum) {
+    Map<String, Object> response = new LinkedHashMap<>();
+    response.put("isSuccess", true);
+    response.put("status", HttpStatus.OK.value());
+    response.put("message", message);
+    response.put("currentNum", currentNum);
+    response.put("maxNum", 50);
+    response.put("result", result);
+    return ResponseEntity.ok(response);
+  }
+
   public static ResponseEntity<Object> ok(ResponseMessage message) {
     Map<String, Object> response = new LinkedHashMap<>();
     response.put("isSuccess", true);
