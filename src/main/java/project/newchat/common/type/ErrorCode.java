@@ -29,6 +29,10 @@ public enum ErrorCode {
   NEEDFUL_FRIEND_RECEIVE("요청에 대한 응답을 해 주어야 합니다."),
   NOT_FOUND_RECEIVE_FRIEND_USER("친구요청을 받은 사용자를 찾을 수 없습니다."),
   FRIEND_LIST_IS_FULL("친구 목록이 꽉 차 있습니다."),
+  TO_USER_FRIEND_LIST_IS_FULL("상대방의 친구 목록이 꽉 차 있습니다."),
+  NOT_FOUND_REQUEST_FRIEND("친구 요청을 찾을 수 없습니다."),
+  NOT_FOUND_FRIEND("친구 관계를 찾을 수 없습니다. 해당 유저와 친구가 아닙니다."),
+  CAN_NOT_DELETE_FRIEND("더이상 친구를 삭제할 수 없습니다.")
   ;
 
   private final String description;
