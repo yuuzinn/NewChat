@@ -11,6 +11,8 @@ import project.newchat.friend.domain.Friend;
 public interface FriendRepository extends JpaRepository<Friend, Long> {
   Optional<Friend> findByFromUserIdAndToUserId(Long fromUserId, Long toUserId);
 
+  Optional<Friend> findByFromUserIdAndToUserIdAndAccept(Long fromUserId, Long toUserId, Boolean accept);
+
   @Query(value = "select count(*) from friend where (from_user_id = :id or to_user_id = :id) and accept = true", nativeQuery = true)
   Long countByFromUserIdOrToUserIdAndAccept(@Param("id") Long id);
 }
