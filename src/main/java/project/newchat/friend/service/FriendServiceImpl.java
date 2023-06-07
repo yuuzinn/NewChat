@@ -262,13 +262,14 @@ public class FriendServiceImpl implements FriendService {
       Long friendId = friend.getFromUserId();
       ids.add(friendId);
     }
-    List<User> userList = userRepository.findNicknameById(ids, pageable);
+    List<User> userList = userRepository.findUserById(ids, pageable);
     if (userList.isEmpty()) {
       throw new CustomException(NOT_FOUND_USER);
     }
     for (User value : userList) {
       FriendDto build = FriendDto.builder()
           .nickname(value.getNickname())
+          .status(value.getStatus())
           .build();
       friendDtoList.add(build);
     }

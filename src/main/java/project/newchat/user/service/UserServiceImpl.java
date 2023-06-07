@@ -1,5 +1,8 @@
 package project.newchat.user.service;
 
+import static project.newchat.common.type.ErrorCode.ALREADY_USER_ID;
+import static project.newchat.common.type.ErrorCode.NOT_FOUND_USER;
+
 import java.time.LocalDateTime;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +32,7 @@ public class UserServiceImpl implements UserService {
   public UserDto signUp(UserRequest user) {
     Optional<User> email = userRepository.findByEmail(user.getEmail());
     if (email.isPresent()) {
-      throw new CustomException(ErrorCode.ALREADY_USER_ID, user.getEmail());
+      throw new CustomException(ALREADY_USER_ID, user.getEmail());
     }
     String userPasswordEncode = passwordEncoder.encode(user.getPassword());
     User userSave = User.builder()
@@ -37,6 +40,7 @@ public class UserServiceImpl implements UserService {
         .password(userPasswordEncode)
         .nickname(user.getNickname())
         .createdAt(LocalDateTime.now())
+        .status(false)
         .build();
 
     UserDto userDto = UserDto.builder()
@@ -80,7 +84,7 @@ public class UserServiceImpl implements UserService {
   public User signUpTest(UserRequest user) {
     Optional<User> email = userRepository.findByEmail(user.getEmail());
     if (email.isPresent()) {
-      throw new CustomException(ErrorCode.ALREADY_USER_ID, user.getEmail());
+      throw new CustomException(ALREADY_USER_ID, user.getEmail());
     }
     User userSave = User.builder().email(user.getEmail()).password(user.getPassword())
         .nickname(user.getNickname()).createdAt(LocalDateTime.now()).build();
@@ -92,20 +96,22 @@ public class UserServiceImpl implements UserService {
   public User login(LoginRequest request) {
     String requestPassword = request.getPassword(); // 1244
     Optional<User> user = userRepository.findByEmail(request.getEmail());// db pw
-    if (!user.isPresent()) {
-      throw new CustomException(ErrorCode.NOT_FOUND_USER, request.getEmail());
+    if (user.isEmpty()) {
+      throw new CustomException(NOT_FOUND_USER, request.getEmail());
     }
     String dbPassword = user.get().getPassword();
     if (!isSamePassword(requestPassword, dbPassword)) {
       throw new CustomException(ErrorCode.NOT_SAME_PASSWORD);
     }
+    user.get().setStatus(true);
+    userRepository.save(user.get());
     return userRepository.findUserByEmailAndPassword(request.getEmail(), dbPassword).orElseThrow();
   }
 
   @Override
   public void update(Long userId, UpdateRequest updateRequest) {
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
     String currentNickname = user.getNickname();
     if (currentNickname.equals(updateRequest.getNickname())) {
       throw new CustomException(ErrorCode.REQUEST_SAME_AS_CURRENT_NICKNAME); // 현재 닉네임과 바꿀 닉네임이 같을 경우
@@ -113,6 +119,14 @@ public class UserServiceImpl implements UserService {
     user.update(updateRequest.getNickname(), LocalDateTime.now());
     userRepository.save(user);
     }
+
+  @Override
+  public void logout(Long userId) {
+    User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+    user.setStatus(false);
+    userRepository.save(user);
+  }
 
   public boolean isSamePassword(String password, String dbUserPassword) {
     return passwordEncoder.matches(password, dbUserPassword);
