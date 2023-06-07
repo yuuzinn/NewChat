@@ -12,6 +12,7 @@ import static project.newchat.common.type.ErrorCode.NOT_FOUND_REQUEST_FRIEND;
 import static project.newchat.common.type.ErrorCode.NOT_FOUND_USER;
 import static project.newchat.common.type.ErrorCode.TO_USER_FRIEND_LIST_IS_FULL;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -19,10 +20,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.newchat.common.exception.CustomException;
 import project.newchat.friend.domain.Friend;
+import project.newchat.friend.dto.FriendDto;
 import project.newchat.friend.repository.FriendRepository;
 import project.newchat.user.domain.User;
 import project.newchat.user.repository.UserRepository;
@@ -230,5 +233,45 @@ public class FriendServiceImpl implements FriendService {
     } finally {
       lock.unlock();
     }
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<FriendDto> selectFriendList(Long fromUserId, Pageable pageable) {
+    Optional<User> user = userRepository.findById(fromUserId);
+    if (user.isEmpty()) {
+      throw new CustomException(NOT_FOUND_USER);
+    }
+    // 내 ID값과 true(친구)를 넣고
+    List<Friend> toUserFriend = friendRepository
+        .findFriendByFromUserIdAndAccept(fromUserId, true); // 내가 친구 신청을 걸어서 친구가 된
+    List<Friend> fromUserFriend = friendRepository
+        .findFriendByToUserIdAndAccept(fromUserId, true); // 내가 요청을 수락하고 친구가 된
+    if (toUserFriend.isEmpty() && fromUserFriend.isEmpty()) {
+      throw new CustomException(NOT_FOUND_FRIEND);
+    }
+    List<Friend> toFriendList = new ArrayList<>(toUserFriend); // - 정보들 LIST 삽입
+    List<Friend> fromFriendList = new ArrayList<>(fromUserFriend); // - 동일
+    List<FriendDto> friendDtoList = new ArrayList<>(); // DTO 변환
+    List<Long> ids = new ArrayList<>(); // userId 값들 list 저장하여 select
+    for (Friend friend : toFriendList) {
+      Long friendId = friend.getToUserId();
+      ids.add(friendId);
+    }
+    for (Friend friend : fromFriendList) {
+      Long friendId = friend.getFromUserId();
+      ids.add(friendId);
+    }
+    List<User> userList = userRepository.findNicknameById(ids, pageable);
+    if (userList.isEmpty()) {
+      throw new CustomException(NOT_FOUND_USER);
+    }
+    for (User value : userList) {
+      FriendDto build = FriendDto.builder()
+          .nickname(value.getNickname())
+          .build();
+      friendDtoList.add(build);
+    }
+    return friendDtoList;
   }
 }
