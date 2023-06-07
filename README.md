@@ -65,7 +65,7 @@
 # ERD ver 1.0 
 ![image](https://user-images.githubusercontent.com/119172260/236689573-141d01e8-7992-4827-8721-f2ca09adb72e.png)
 ## ERD ver 1.x
-![image](https://github.com/yeb0/NewChat/assets/119172260/7c78d2b1-9a3b-466b-9a58-b9452d396bcc)
+![image](https://github.com/yeb0/NewChat/assets/119172260/92ae5dda-9b74-4374-8145-4c4be28163ac)
 
 # Architecture ver 1.0
 
