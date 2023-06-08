@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
 import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
 import project.newchat.chatroom.dto.ChatRoomDto;
+import project.newchat.chatroom.dto.ChatRoomUserDto;
 
 public interface ChatRoomService {
 
@@ -25,4 +26,6 @@ public interface ChatRoomService {
   void deleteRoom(Long userId, Long roomId);
 
   void updateRoom(Long roomId, ChatRoomUpdateRequest chatRoomUpdateRequest, Long userId);
+
+  List<ChatRoomUserDto> getRoomUsers(Long roomId, Long userId);
 }

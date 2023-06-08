@@ -1,7 +1,10 @@
 package project.newchat.chatroom.service;
 
 
+import static project.newchat.common.type.ErrorCode.NOT_ROOM_MEMBER;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -12,19 +15,20 @@ import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import project.newchat.chatmsg.repository.ChatMsgRepository;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
 import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
 import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.dto.ChatRoomDto;
+import project.newchat.chatroom.dto.ChatRoomUserDto;
 import project.newchat.chatroom.repository.ChatRoomRepository;
 import project.newchat.common.exception.CustomException;
 import project.newchat.common.type.ErrorCode;
 import project.newchat.user.domain.User;
 import project.newchat.user.repository.UserRepository;
 import project.newchat.userchatroom.domain.UserChatRoom;
+import project.newchat.userchatroom.dto.UserChatRoomDto;
 import project.newchat.userchatroom.repository.UserChatRoomRepository;
 
 @Service
@@ -45,7 +49,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Transactional
   public void createRoom(ChatRoomRequest chatRoomRequest, Long userId) {
     // 유저정보조회
-    User findUser = getFindUser(userId);
+    User findUser = getUser(userId);
     // chatroom 생성
     ChatRoom chatRoom = ChatRoom.builder()
         .roomCreator(findUser.getId())
@@ -77,7 +81,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         throw new CustomException(ErrorCode.FAILED_GET_LOCK);
       }
       // 유저 조회
-      User findUser = getFindUser(userId);
+      User findUser = getUser(userId);
 
       // room 조회
       ChatRoom chatRoom = chatRoomRepository.findById(roomId) // lock (기존)
@@ -175,7 +179,38 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     chatRoomRepository.save(room);
   }
 
-  private User getFindUser(Long userId) {
+  @Override
+  @Transactional(readOnly = true)
+  public List<ChatRoomUserDto> getRoomUsers(Long roomId, Long userId) {
+    // 방 정보
+    getChatRoom(roomId);
+    // 로그인 유저 정보
+    getUser(userId);
+    // 방에 있는 유저 정보
+    List<UserChatRoom> userIds = userChatRoomRepository
+        .findUserChatRoomByChatRoomId(roomId);
+    // 방에 있지 않은 유저는 볼 수 없음
+    List<Long> userIdList = new ArrayList<>();
+    for (UserChatRoom chatRoom : userIds) {
+      Long id = chatRoom.getUser().getId();
+      userIdList.add(id);
+    }
+    if (!userIdList.contains(userId)) {
+      throw new CustomException(NOT_ROOM_MEMBER);
+    }
+    // DTO 담기
+    List<ChatRoomUserDto> chatRoomUserDtos = new ArrayList<>();
+    for (UserChatRoom userChatRoom : userIds) {
+      ChatRoomUserDto build = ChatRoomUserDto.builder()
+          .nickname(userChatRoom.getUser().getNickname())
+          .status(userChatRoom.getUser().getStatus())
+          .build();
+      chatRoomUserDtos.add(build);
+    }
+    return chatRoomUserDtos;
+  }
+
+  private User getUser(Long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
   }
