@@ -67,10 +67,21 @@
 - 채팅방 삭제
     - 채팅방을 생성한 사용자만 삭제할 수 있습니다.
 
+## Heart
+
+- 채팅방 좋아요
+    - 사용자는 해당 채팅방에 좋아요를 누를 수 있습니다.
+    - 단, 한 사람 당 하나씩 누를 수 있습니다.
+    - 좋아요 상태에서 다시 좋아요를 하게 된다면, 좋아요 취소가 됩니다.
+- 채팅방 좋아요가 많은 순으로 조회
+    - 채팅방 좋아요가 많은 순서대로 조회할 수 있습니다.
+- 내가 좋아요 누른 방 조회하기
+    - 사용자(자신)가 좋아요를 누른 방들의 목록을 조회합니다.
+
 # ERD ver 1.0 
 ![image](https://user-images.githubusercontent.com/119172260/236689573-141d01e8-7992-4827-8721-f2ca09adb72e.png)
 ## ERD ver 1.x
-![image](https://github.com/yeb0/NewChat/assets/119172260/92ae5dda-9b74-4374-8145-4c4be28163ac)
+![image](https://github.com/yeb0/NewChat/assets/119172260/8cdff457-ab93-4a7a-a13e-fe03e1f6dcff)
 
 # Architecture ver 1.0
 
