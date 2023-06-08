@@ -89,7 +89,6 @@
 - MySQL
 - Web Socket
 - Redis
-- Nginx
 
 # API 💻
 
