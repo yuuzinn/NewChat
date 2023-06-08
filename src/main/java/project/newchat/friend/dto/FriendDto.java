@@ -13,4 +13,5 @@ import lombok.Setter;
 @Builder
 public class FriendDto {
   private String nickname; // 친구 닉네임
+  private Boolean status; // 친구 로그인 상태
 }

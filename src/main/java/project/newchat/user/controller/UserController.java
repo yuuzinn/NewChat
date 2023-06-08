@@ -1,5 +1,10 @@
 package project.newchat.user.controller;
 
+import static project.newchat.common.type.ResponseMessage.CREATE_USER;
+import static project.newchat.common.type.ResponseMessage.LOGIN_SUCCESS;
+import static project.newchat.common.type.ResponseMessage.LOGOUT_SUCCESS;
+import static project.newchat.common.type.ResponseMessage.USER_UPDATE_SUCCESS;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,14 +37,14 @@ public class UserController {
   public ResponseEntity<Object> signUp(
       @RequestBody @Valid UserRequest userRequest) {
     UserDto user = userService.signUp(userRequest);
-    return ResponseUtils.ok(ResponseMessage.CREATE_USER, user);
+    return ResponseUtils.ok(CREATE_USER, user);
   }
 
   @PostMapping("/signUp2") // 서버 터트리기 테스트
   public ResponseEntity<Object> signUpTest(
       @RequestBody @Valid TestUserRequest userRequest) {
     UserDto user = userService.signUpTe2(userRequest);
-    return ResponseUtils.ok(ResponseMessage.CREATE_USER, user);
+    return ResponseUtils.ok(CREATE_USER, user);
   }
 
   @PostMapping("/login")
@@ -48,14 +53,16 @@ public class UserController {
       HttpSession session) {
     User login = userService.login(userRequest);
     session.setAttribute("user", login.getId());
-    return ResponseUtils.ok(ResponseMessage.LOGIN_SUCCESS);
+    return ResponseUtils.ok(LOGIN_SUCCESS);
   }
 
   @PostMapping("/logout")
   @LoginCheck
   public ResponseEntity<Object> logout(HttpSession session) {
+    Long userId = (Long) session.getAttribute("user");
+    userService.logout(userId);
     session.invalidate();
-    return ResponseUtils.ok(ResponseMessage.LOGOUT_SUCCESS);
+    return ResponseUtils.ok(LOGOUT_SUCCESS);
   }
 
   @PatchMapping("/update")
@@ -65,6 +72,6 @@ public class UserController {
       HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     userService.update(userId, updateRequest);
-    return ResponseUtils.ok(ResponseMessage.USER_UPDATE_SUCCESS);
+    return ResponseUtils.ok(USER_UPDATE_SUCCESS);
   }
 }

@@ -23,4 +23,7 @@ public interface UserService {
 
 
   void update(Long userId, UpdateRequest updateRequest);
+
+  void logout(Long userId);
+
 }

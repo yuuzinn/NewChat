@@ -37,17 +37,13 @@ public class User {
 
   private LocalDateTime updatedAt;
 
+  private Boolean status; // 로그인이면 true, 로그아웃 false
+
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<UserChatRoom> userChatRooms;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<ChatMsg> chatMsgs;
-
-//  @OneToMany(mappedBy = "fromUser", fetch = FetchType.LAZY)
-//  private List<Friend> fromUsers;
-//
-//  @OneToMany(mappedBy = "toUser", fetch = FetchType.LAZY)
-//  private List<Friend> toUsers;
 
   public void update(String nickname, LocalDateTime updatedAt) {
     this.setNickname(nickname);

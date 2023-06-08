@@ -14,6 +14,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<User> findUserByEmailAndPassword(String email, String password);
 
-  @Query("select u from User u where u.id in (:ids)")
-  List<User> findNicknameById(@Param("ids") List<Long> ids, Pageable pageable);
+  @Query("select u from User u where u.id in (:ids) order by u.status desc ")
+  List<User> findUserById(@Param("ids") List<Long> ids, Pageable pageable);
 }
