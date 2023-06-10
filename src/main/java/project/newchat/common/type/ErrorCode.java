@@ -33,7 +33,9 @@ public enum ErrorCode {
   NOT_FOUND_REQUEST_FRIEND("친구 요청을 찾을 수 없습니다."),
   NOT_FOUND_FRIEND("친구 관계를 찾을 수 없습니다. 해당 유저와 친구가 아닙니다."),
   CAN_NOT_DELETE_FRIEND("더이상 친구를 삭제할 수 없습니다."),
-  NOT_ROOM_MEMBER("채팅방에 속한 유저가 아닙니다.")
+  NOT_ROOM_MEMBER("채팅방에 속한 유저가 아닙니다."),
+  ALREADY_HEART_TO_ROOM("이미 해당 채팅방에 좋아요를 누르셨습니다."),
+  NOT_EXIST_ROOM_HEART("해당 채팅방에 좋아요가 눌러져 있지 않습니다.")
   ;
 
   private final String description;

@@ -12,9 +12,12 @@ import project.newchat.chatroom.domain.ChatRoom;
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
-//  @Lock(LockModeType.PESSIMISTIC_WRITE)
-//  @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value ="1000")})
   Optional<ChatRoom> findById(Long aLong);
+
+  @Query("SELECT c FROM ChatRoom c LEFT JOIN Heart h ON c.id = h.chatRoom.id " +
+      "GROUP BY c.id " +
+      "ORDER BY COUNT(h.user.id) DESC")
+  Page<ChatRoom> findAllByOrderByHearts(Pageable pageable);
 
   Optional<ChatRoom> findChatRoomById(Long id);
 
