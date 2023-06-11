@@ -1,5 +1,6 @@
 package project.newchat.chatroom.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,4 +27,6 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
   Page<ChatRoom> findAllByUserChatRoomsUserId(Long userId,Pageable pageable);
 
+  @Query("SELECT c FROM ChatRoom c WHERE c.id IN :ids ORDER BY c.createdAt DESC")
+  Page<ChatRoom> findChatRoomByInId(@Param("ids") List<Long> ids, Pageable pageable);
 }
