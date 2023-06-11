@@ -1,12 +1,14 @@
 package project.newchat.chatroom.service;
 
 
+import static project.newchat.common.type.ErrorCode.NOT_FOUND_HEART;
 import static project.newchat.common.type.ErrorCode.NOT_ROOM_MEMBER;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,8 @@ import project.newchat.chatroom.dto.ChatRoomUserDto;
 import project.newchat.chatroom.repository.ChatRoomRepository;
 import project.newchat.common.exception.CustomException;
 import project.newchat.common.type.ErrorCode;
+import project.newchat.heart.domain.Heart;
+import project.newchat.heart.repository.HeartRepository;
 import project.newchat.user.domain.User;
 import project.newchat.user.repository.UserRepository;
 import project.newchat.userchatroom.domain.UserChatRoom;
@@ -42,6 +46,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   private final UserRepository userRepository;
 
   private final UserChatRoomRepository userChatRoomRepository;
+
+  private final HeartRepository heartRepository;
 
   private final RedissonClient redissonClient;
 
@@ -226,6 +232,35 @@ public class ChatRoomServiceImpl implements ChatRoomService {
       chatRoomUserDtos.add(build);
     }
     return chatRoomUserDtos;
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<ChatRoomDto> myHeartRoomList(Long userId, Pageable pageable) {
+    getUser(userId);
+    List<Heart> heart = heartRepository.findByUserId(userId);
+    if (heart.isEmpty()) {
+      throw new CustomException(NOT_FOUND_HEART);
+    }
+    List<Long> ids = new ArrayList<>();
+    for(Heart heart1 : heart) {
+      Long id = heart1.getChatRoom().getId();
+      ids.add(id);
+    }
+    Page<ChatRoom> chatRoomByInId = chatRoomRepository.findChatRoomByInId(ids, pageable);
+    List<ChatRoom> chatRoomList = chatRoomByInId.toList();
+    List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
+    for (ChatRoom chatRoom : chatRoomList) {
+      ChatRoomDto build = ChatRoomDto.builder()
+          .id(chatRoom.getId())
+          .title(chatRoom.getTitle())
+          .heartCount(chatRoom.getHearts().size())
+          .currentUserCount((long) chatRoom.getUserChatRooms().size())
+          .userCountMax(chatRoom.getUserCountMax())
+          .build();
+      chatRoomDtos.add(build);
+    }
+    return chatRoomDtos;
   }
 
   private User getUser(Long userId) {

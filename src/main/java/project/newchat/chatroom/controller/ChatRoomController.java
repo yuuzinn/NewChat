@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
 import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
+import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.dto.ChatRoomDto;
 import project.newchat.chatroom.dto.ChatRoomUserDto;
 import project.newchat.chatroom.service.ChatRoomService;
@@ -158,7 +159,7 @@ public class ChatRoomController {
     chatRoomService.deleteRoom(userId, roomId);
     return ResponseUtils.ok(DELETE_CHAT_ROOM_SUCCESS);
   }
-  // 최대 8명 제한이니, 페이징 처리는 X
+  // 방에 누가 있는지 조회 (최대 8명 제한이니, 페이징 처리는 X)
   @GetMapping("/room/users/{roomId}")
   @LoginCheck
   public ResponseEntity<Object> getRoomUsers(
@@ -166,5 +167,18 @@ public class ChatRoomController {
     Long userId = (Long) session.getAttribute("user");
     List<ChatRoomUserDto> roomUsers = chatRoomService.getRoomUsers(roomId, userId);
     return ResponseUtils.ok(CHAT_ROOM_USERS_SELECT_SUCCESS, roomUsers);
+  }
+
+  // 사용자(자신)가 좋아요 누른 방 리스트 조회
+  @GetMapping("/room/myHeart/list")
+  @LoginCheck
+  public ResponseEntity<Object> getMyHeartRoomList(
+      Pageable pageable, HttpSession session) {
+    Long userId = (Long) session.getAttribute("user");
+    List<ChatRoomDto> list =  chatRoomService.myHeartRoomList(userId, pageable);
+    if (list.size() == 0) {
+      return ResponseUtils.notFound(NOT_EXIST_CHAT_ROOM);
+    }
+    return ResponseUtils.ok(CHAT_ROOM_ALL_BY_LIST_SELECT_SUCCESS, list);
   }
 }
