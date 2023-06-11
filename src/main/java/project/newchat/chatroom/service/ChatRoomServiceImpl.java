@@ -116,15 +116,33 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   }
 
   // 채팅방 전체 조회
-
   @Override
   @Transactional
   public List<ChatRoomDto> getRoomList(Pageable pageable) {
     Page<ChatRoom> all = chatRoomRepository.findAll(pageable);
     return getChatRoomDtos(all);
   }
-  // 자신이 생성한 방 리스트 조회
 
+  // 좋아요 순으로 정렬 후 방 전체 조회
+  @Override
+  public List<ChatRoomDto> getRoomHeartSortList(Pageable pageable) {
+    Page<ChatRoom> all = chatRoomRepository.findAllByOrderByHearts(pageable);
+    List<ChatRoom> chatRooms = all.toList();
+    List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
+    for (ChatRoom chatRoom : chatRooms) {
+      ChatRoomDto build = ChatRoomDto.builder()
+          .id(chatRoom.getId())
+          .title(chatRoom.getTitle())
+          .userCountMax(chatRoom.getUserCountMax())
+          .currentUserCount((long) chatRoom.getUserChatRooms().size())
+          .heartCount(chatRoom.getHearts().size())
+          .build();
+      chatRoomDtos.add(build);
+    }
+    return chatRoomDtos;
+  }
+
+  // 자신이 생성한 방 리스트 조회
   @Override
   public List<ChatRoomDto> roomsByCreatorUser(Long userId, Pageable pageable) {
     Page<ChatRoom> userCreateAll = chatRoomRepository.findAllByUserId(userId, pageable);

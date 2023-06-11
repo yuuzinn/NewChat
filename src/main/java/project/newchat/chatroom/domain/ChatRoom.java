@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.newchat.chatmsg.domain.ChatMsg;
+import project.newchat.heart.domain.Heart;
 import project.newchat.user.domain.User;
 import project.newchat.userchatroom.domain.UserChatRoom;
 
@@ -41,6 +42,9 @@ public class ChatRoom {
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<ChatMsg> chatMsgs;
+
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
+    private List<Heart> hearts;
 
     @Override
     public String toString() {

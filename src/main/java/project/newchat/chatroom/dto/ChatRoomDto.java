@@ -21,12 +21,15 @@ public class ChatRoomDto {
 
   private Integer userCountMax;
 
+  private Integer heartCount;
+
   public static ChatRoomDto of(ChatRoom chatRoom) {
     return ChatRoomDto.builder()
         .id(chatRoom.getId())
         .title(chatRoom.getTitle())
         .currentUserCount((long) chatRoom.getUserChatRooms().size())
         .userCountMax(chatRoom.getUserCountMax())
+        .heartCount(chatRoom.getHearts().size())
         .build();
   }
 }

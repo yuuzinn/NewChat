@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import project.newchat.chatmsg.domain.ChatMsg;
 import project.newchat.friend.domain.Friend;
+import project.newchat.heart.domain.Heart;
 import project.newchat.userchatroom.domain.UserChatRoom;
 
 import javax.persistence.*;
@@ -44,6 +45,9 @@ public class User {
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<ChatMsg> chatMsgs;
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private List<Heart> hearts;
 
   public void update(String nickname, LocalDateTime updatedAt) {
     this.setNickname(nickname);

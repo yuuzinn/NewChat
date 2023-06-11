@@ -17,6 +17,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -80,6 +81,17 @@ public class ChatRoomController {
           .ok(CHAT_ROOM_ALL_BY_LIST_SELECT_SUCCESS, roomList);
     }
   }
+  // 전체 리스트에서 좋아요 순으로 정렬
+  @GetMapping("/room/heart")
+  @LoginCheck
+  public ResponseEntity<Object> roomHeartSort(Pageable pageable) {
+    List<ChatRoomDto> roomList = chatRoomService.getRoomHeartSortList(pageable);
+    if (roomList.size() == 0) {
+      return ResponseUtils.notFound(NOT_EXIST_CHAT_ROOM);
+    } else {
+      return ResponseUtils.ok(CHAT_ROOM_ALL_BY_LIST_SELECT_SUCCESS, roomList);
+    }
+  }
 
   // 사용자(자신)가 생성한 방 리스트 조회
   @GetMapping("/room/creator")
@@ -115,6 +127,7 @@ public class ChatRoomController {
     }
   }
 
+  // 채팅방 제목 수정
   @PatchMapping("/room/update/{roomId}")
   @LoginCheck
   public ResponseEntity<Object> updateRoom(

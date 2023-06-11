@@ -1,6 +1,7 @@
 package project.newchat.chatroom.service;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
 import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
@@ -16,6 +17,8 @@ public interface ChatRoomService {
 
   List<ChatRoomDto> getRoomList(Pageable pageable);
 
+  List<ChatRoomDto> getRoomHeartSortList(Pageable pageable);
+
 
   List<ChatRoomDto> roomsByCreatorUser(Long userId, Pageable pageable);
 
@@ -28,4 +31,5 @@ public interface ChatRoomService {
   void updateRoom(Long roomId, ChatRoomUpdateRequest chatRoomUpdateRequest, Long userId);
 
   List<ChatRoomUserDto> getRoomUsers(Long roomId, Long userId);
+
 }
