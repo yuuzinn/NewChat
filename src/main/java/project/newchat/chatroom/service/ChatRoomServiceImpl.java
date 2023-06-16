@@ -1,14 +1,19 @@
 package project.newchat.chatroom.service;
 
 
+import static project.newchat.common.type.ErrorCode.ALREADY_JOIN_ROOM;
+import static project.newchat.common.type.ErrorCode.FAILED_GET_LOCK;
+import static project.newchat.common.type.ErrorCode.NONE_ROOM;
 import static project.newchat.common.type.ErrorCode.NOT_FOUND_HEART;
+import static project.newchat.common.type.ErrorCode.NOT_FOUND_USER;
+import static project.newchat.common.type.ErrorCode.NOT_ROOM_CREATOR;
 import static project.newchat.common.type.ErrorCode.NOT_ROOM_MEMBER;
+import static project.newchat.common.type.ErrorCode.REQUEST_SAME_AS_CURRENT_TITLE;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +37,6 @@ import project.newchat.heart.repository.HeartRepository;
 import project.newchat.user.domain.User;
 import project.newchat.user.repository.UserRepository;
 import project.newchat.userchatroom.domain.UserChatRoom;
-import project.newchat.userchatroom.dto.UserChatRoomDto;
 import project.newchat.userchatroom.repository.UserChatRoomRepository;
 
 @Service
@@ -84,7 +88,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
       boolean available = lock.tryLock(1, TimeUnit.SECONDS);
 
       if (!available) {
-        throw new CustomException(ErrorCode.FAILED_GET_LOCK);
+        throw new CustomException(FAILED_GET_LOCK);
       }
       // 유저 조회
       User findUser = getUser(userId);
@@ -100,7 +104,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
           .findUserChatRoomByChatRoom_Id(roomId);
 
       if (userChatRoomByChatRoomId.contains(userId)) {
-        throw new CustomException(ErrorCode.ALREADY_JOIN_ROOM);
+        throw new CustomException(ALREADY_JOIN_ROOM);
       }
 
       // chatroom 입장
@@ -115,7 +119,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
       userChatRoomRepository.save(userChatRoom);
       // 비즈니스 로직 끝
     } catch (InterruptedException e) {
-      throw new CustomException(ErrorCode.FAILED_GET_LOCK);
+      throw new CustomException(FAILED_GET_LOCK);
     } finally {
       lock.unlock();
     }
@@ -162,6 +166,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .findAllByUserChatRoomsUserId(userId, pageable);
     return getChatRoomDtos(userPartAll);
   }
+
   @Override
   @Transactional
   public void outRoom(Long userId, Long roomId) {
@@ -182,7 +187,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   public void deleteRoom(Long userId, Long roomId) {
     ChatRoom room = getChatRoom(roomId);
     if (!Objects.equals(room.getRoomCreator(), userId)) {
-      throw new CustomException(ErrorCode.NOT_ROOM_CREATOR);
+      throw new CustomException(NOT_ROOM_CREATOR);
     }
     chatMsgRepository.deleteChatMsgByChatRoom_Id(roomId);
     userChatRoomRepository.deleteUserChatRoomByChatRoom_Id(roomId);
@@ -194,10 +199,10 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     ChatRoom room = getChatRoom(roomId);
     String currentRoomTitle = room.getTitle();
     if (!room.getRoomCreator().equals(userId)) {
-      throw new CustomException(ErrorCode.NOT_ROOM_CREATOR);
+      throw new CustomException(NOT_ROOM_CREATOR);
     }
     if (currentRoomTitle.equals(chatRoomUpdateRequest.getTitle())) {
-      throw new CustomException(ErrorCode.REQUEST_SAME_AS_CURRENT_TITLE);
+      throw new CustomException(REQUEST_SAME_AS_CURRENT_TITLE);
     }
     room.update(chatRoomUpdateRequest.getTitle(), LocalDateTime.now());
     chatRoomRepository.save(room);
@@ -243,7 +248,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
       throw new CustomException(NOT_FOUND_HEART);
     }
     List<Long> ids = new ArrayList<>();
-    for(Heart heart1 : heart) {
+    for (Heart heart1 : heart) {
       Long id = heart1.getChatRoom().getId();
       ids.add(id);
     }
@@ -265,13 +270,13 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
   private User getUser(Long userId) {
     return userRepository.findById(userId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
   }
 
   private ChatRoom getChatRoom(Long roomId) {
     return chatRoomRepository
         .findChatRoomById(roomId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NONE_ROOM));
+        .orElseThrow(() -> new CustomException(NONE_ROOM));
   }
 
   // 방 조회 DTO 변환 메서드 추출

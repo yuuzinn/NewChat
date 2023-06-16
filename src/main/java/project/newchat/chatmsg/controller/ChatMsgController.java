@@ -1,6 +1,10 @@
 package project.newchat.chatmsg.controller;
 
 
+import static project.newchat.common.type.ResponseMessage.CHAT_ROOM_MSG_LIST_SELECT_SUCCESS;
+import static project.newchat.common.type.ResponseMessage.NOT_EXIST_CHAT_ROOM_MSG_LIST;
+import static project.newchat.common.type.ResponseMessage.SEND_CHAT_MSG_SUCCESS;
+
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -36,7 +40,7 @@ public class ChatMsgController {
       HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
     ChatMsgResponse response = chatMsgService.sendMessage(message, userId, roomId);
-      return ResponseUtils.ok(ResponseMessage.SEND_CHAT_MSG_SUCCESS, response);
+      return ResponseUtils.ok(SEND_CHAT_MSG_SUCCESS, response);
   }
 
   @GetMapping("/msg/{roomId}")
@@ -49,10 +53,10 @@ public class ChatMsgController {
     List<ChatMsgDto> roomChatMsgList = chatMsgService.getRoomChatMsgList(roomId, userId, lastId);
     if (roomChatMsgList != null) {
       return ResponseUtils
-          .ok(ResponseMessage.CHAT_ROOM_MSG_LIST_SELECT_SUCCESS, roomChatMsgList);
+          .ok(CHAT_ROOM_MSG_LIST_SELECT_SUCCESS, roomChatMsgList);
     } else {
       return ResponseUtils
-          .notFound(ResponseMessage.NOT_EXIST_CHAT_ROOM_MSG_LIST);
+          .notFound(NOT_EXIST_CHAT_ROOM_MSG_LIST);
     }
   }
 }

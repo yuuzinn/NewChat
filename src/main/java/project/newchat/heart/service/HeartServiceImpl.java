@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.repository.ChatRoomRepository;
 import project.newchat.common.exception.CustomException;
-import project.newchat.common.type.ErrorCode;
 import project.newchat.heart.domain.Heart;
 import project.newchat.heart.repository.HeartRepository;
 import project.newchat.user.domain.User;
@@ -21,6 +20,7 @@ import project.newchat.user.repository.UserRepository;
 @Service
 @RequiredArgsConstructor
 public class HeartServiceImpl implements HeartService {
+
   private final UserRepository userRepository;
   private final ChatRoomRepository chatRoomRepository;
   private final HeartRepository heartRepository;
