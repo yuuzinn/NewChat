@@ -1,5 +1,8 @@
 package project.newchat.chatmsg.service;
 
+import static project.newchat.common.type.ErrorCode.NOT_FOUND_ROOM;
+import static project.newchat.common.type.ErrorCode.NOT_FOUND_USER;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,10 +33,10 @@ public class ChatMsgServiceImpl implements ChatMsgService {
   @Override
   public ChatMsgResponse sendMessage(ChatMsgRequest message, Long userId, Long roomId) {
     User findUser = userRepository.findById(userId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
     ChatRoom chatRoom = chatRoomRepository.findChatRoomById(roomId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROOM));
+        .orElseThrow(() -> new CustomException(NOT_FOUND_ROOM));
     // 채팅 메시지 생성
     ChatMsg chatMsg = ChatMsg.builder()
         .message(message.getMessage())
@@ -55,7 +58,7 @@ public class ChatMsgServiceImpl implements ChatMsgService {
   @Override
   public List<ChatMsgDto> getRoomChatMsgList(Long roomId, Long userId, Long lastId) {
     userRepository.findById(userId)
-        .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
     List<ChatMsg> chatMsgsList = chatMsgCustomRepository.findChatRoomIdByChatMsg(roomId, lastId);
     return chatMsgsList.stream().map(chatMsg -> new ChatMsgDto(

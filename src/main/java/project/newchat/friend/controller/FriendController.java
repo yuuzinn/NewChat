@@ -1,6 +1,11 @@
 package project.newchat.friend.controller;
 
 
+import static project.newchat.common.type.ResponseMessage.FRIENDS_SELECT_SUCCESS;
+import static project.newchat.common.type.ResponseMessage.FRIEND_DELETE_SUCCESS;
+import static project.newchat.common.type.ResponseMessage.NOT_EXIST_FRIEND_LIST;
+import static project.newchat.common.type.ResponseMessage.REFUSE_FRIEND_SUCCESS;
+
 import java.util.List;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +61,7 @@ public class FriendController {
       HttpSession session) {
     Long fromUserId = (Long) session.getAttribute("user");
     friendService.refuse(fromUserId, toUserId);
-    return ResponseUtils.ok(ResponseMessage.REFUSE_FRIEND_SUCCESS);
+    return ResponseUtils.ok(REFUSE_FRIEND_SUCCESS);
   }
 
   @DeleteMapping("/friend/{toUserId}")
@@ -66,7 +71,7 @@ public class FriendController {
       HttpSession session) {
     Long fromUserId = (Long) session.getAttribute("user");
     friendService.delete(fromUserId, toUserId);
-    return ResponseUtils.ok(ResponseMessage.FRIEND_DELETE_SUCCESS);
+    return ResponseUtils.ok(FRIEND_DELETE_SUCCESS);
   }
   @GetMapping("/friend")
   @LoginCheck
@@ -77,9 +82,9 @@ public class FriendController {
     Long currentFriendCnt = friendRepository // controller에서 먼저 끊어주기 위함.
         .countByFromUserIdOrToUserIdAndAccept(fromUserId);
     if (currentFriendCnt == 0) {
-      return ResponseUtils.notFound(ResponseMessage.NOT_EXIST_FRIEND_LIST);
+      return ResponseUtils.notFound(NOT_EXIST_FRIEND_LIST);
     }
     List<FriendDto> list = friendService.selectFriendList(fromUserId, pageable);
-    return ResponseUtils.friendSelectOk(ResponseMessage.FRIENDS_SELECT_SUCCESS, list, currentFriendCnt);
+    return ResponseUtils.friendSelectOk(FRIENDS_SELECT_SUCCESS, list, currentFriendCnt);
   }
 }

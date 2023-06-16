@@ -203,12 +203,12 @@ public class FriendServiceImpl implements FriendService {
           .findById(fromUserId);
       Optional<User> toUser = userRepository
           .findById(toUserId);
-      // todo : 둘 다 같이 삭제할 경우 -> 데이터 찾기 (순방향, 역방향 둘 다 찾아야함)
+      // 둘 다 같이 삭제할 경우 -> 데이터 찾기 (순방향, 역방향 둘 다 찾아야함)
       Optional<Friend> forward = friendRepository
           .findByFromUserIdAndToUserIdAndAccept(fromUserId, toUserId, true);
       Optional<Friend> reverse = friendRepository
           .findByFromUserIdAndToUserIdAndAccept(toUserId, fromUserId, true);
-      // todo : 현재 친구 인원 찾기
+      // 현재 친구 인원 찾기
       Long currentFriendCount = friendRepository
           .countByFromUserIdOrToUserIdAndAccept(fromUserId);
       if (currentFriendCount <= 0) {
