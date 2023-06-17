@@ -17,7 +17,6 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,8 +52,8 @@ public class ChatRoomController {
       @RequestBody @Valid ChatRoomRequest chatRoomRequest,
       HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
-    chatRoomService.createRoom(chatRoomRequest, userId);
-    return ResponseUtils.ok(CREATE_CHAT_ROOM_SUCCESS);
+    ChatRoom room = chatRoomService.createRoom(chatRoomRequest, userId);
+    return ResponseUtils.ok(CREATE_CHAT_ROOM_SUCCESS, room.getCreatedAt());
   }
 
   // 방의 key를 통해 입장할 수 있어야 함.
@@ -82,6 +81,7 @@ public class ChatRoomController {
           .ok(CHAT_ROOM_ALL_BY_LIST_SELECT_SUCCESS, roomList);
     }
   }
+
   // 전체 리스트에서 좋아요 순으로 정렬
   @GetMapping("/room/heart")
   @LoginCheck
@@ -159,6 +159,7 @@ public class ChatRoomController {
     chatRoomService.deleteRoom(userId, roomId);
     return ResponseUtils.ok(DELETE_CHAT_ROOM_SUCCESS);
   }
+
   // 방에 누가 있는지 조회 (최대 8명 제한이니, 페이징 처리는 X)
   @GetMapping("/room/users/{roomId}")
   @LoginCheck
@@ -175,7 +176,7 @@ public class ChatRoomController {
   public ResponseEntity<Object> getMyHeartRoomList(
       Pageable pageable, HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
-    List<ChatRoomDto> list =  chatRoomService.myHeartRoomList(userId, pageable);
+    List<ChatRoomDto> list = chatRoomService.myHeartRoomList(userId, pageable);
     if (list.size() == 0) {
       return ResponseUtils.notFound(NOT_EXIST_CHAT_ROOM);
     }

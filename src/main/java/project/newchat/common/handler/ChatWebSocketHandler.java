@@ -9,6 +9,7 @@ import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -100,5 +101,14 @@ public class ChatWebSocketHandler implements WebSocketHandler {
       roomId = Long.valueOf(uriParts[4]);
     }
     return roomId;
+  }
+
+  public void sendMessage(String payload) throws Exception {
+    for (List<WebSocketSession> sessions : chatRooms.values()) {
+      for (WebSocketSession session : sessions) {
+        TextMessage msg = new TextMessage(payload);
+        session.sendMessage(msg);
+      }
+    }
   }
 }

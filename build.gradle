@@ -37,6 +37,8 @@ dependencies {
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     // security password 암호화
     implementation 'org.springframework.security:spring-security-crypto:5.7.1'
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
 }
 
 tasks.named('test') {

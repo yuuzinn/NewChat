@@ -17,7 +17,7 @@ import project.newchat.chatmsg.repository.ChatMsgRepository;
 import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.repository.ChatRoomRepository;
 import project.newchat.common.exception.CustomException;
-import project.newchat.common.type.ErrorCode;
+import project.newchat.common.kafka.Producers;
 import project.newchat.user.domain.User;
 import project.newchat.user.repository.UserRepository;
 
@@ -29,6 +29,9 @@ public class ChatMsgServiceImpl implements ChatMsgService {
   private final UserRepository userRepository;
   private final ChatRoomRepository chatRoomRepository;
   private final ChatMsgCustomRepository chatMsgCustomRepository;
+
+  private final String BASIC_TOPIC = "CHAT_ROOM";
+  private final Producers producers;
 
   @Override
   public ChatMsgResponse sendMessage(ChatMsgRequest message, Long userId, Long roomId) {
@@ -52,6 +55,8 @@ public class ChatMsgServiceImpl implements ChatMsgService {
         .sendTime(chatMsg.getSendTime())
         .build();
     chatMsgRepository.save(chatMsg);
+    String topicName = BASIC_TOPIC + chatRoom.getId();
+    producers.produceMessage(topicName, message.getMessage());
     return response;
   }
 

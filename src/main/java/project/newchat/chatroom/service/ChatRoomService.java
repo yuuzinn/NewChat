@@ -1,17 +1,17 @@
 package project.newchat.chatroom.service;
 
 import java.util.List;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
 import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
+import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.dto.ChatRoomDto;
 import project.newchat.chatroom.dto.ChatRoomUserDto;
 
 public interface ChatRoomService {
 
 
-  void createRoom(ChatRoomRequest chatRoomRequest, Long userId);
+  ChatRoom createRoom(ChatRoomRequest chatRoomRequest, Long userId);
 
   void joinRoom(Long roomId, Long userId);
 
