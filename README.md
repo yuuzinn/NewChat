@@ -100,6 +100,7 @@
 - MySQL
 - Web Socket
 - Redis
+- Kafka
 
 # API 💻
 
