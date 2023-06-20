@@ -44,7 +44,7 @@ class ChatRoomServiceImplTest {
 
     Long id = login.getId();
 
-    ChatRoomRequest chatRoomRequest = new ChatRoomRequest("testTitle", 8);
+    ChatRoomRequest chatRoomRequest = new ChatRoomRequest("testTitle", 8, null);
     chatRoomService.createRoom(chatRoomRequest, id);
 
     assertThat(chatRoomRequest.getTitle()).isEqualTo("testTitle");
@@ -66,10 +66,10 @@ class ChatRoomServiceImplTest {
         .build();
 
     chatRoomRepository.save(test);
-    chatRoomService.joinRoom(1L, 2L);
+    chatRoomService.joinRoom(1L, 2L, null);
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        chatRoomService.joinRoom(1L, 2L));
+        chatRoomService.joinRoom(1L, 2L, null));
     assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.ALREADY_JOIN_ROOM);
     assertThat(exception.getErrorMessage()).isEqualTo("이미 채팅방에 입장해 있습니다.");
   }

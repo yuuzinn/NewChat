@@ -61,10 +61,10 @@ public class ChatRoomController {
   @PostMapping("/room/join/{roomId}")
   @LoginCheck
   public ResponseEntity<Object> joinRoom(
-      @PathVariable Long roomId,
+      @PathVariable Long roomId, @RequestBody ChatRoomRequest chatRoomRequest,
       HttpSession session) {
     Long userId = (Long) session.getAttribute("user");
-    chatRoomService.joinRoom(roomId, userId);
+    chatRoomService.joinRoom(roomId, userId, chatRoomRequest);
     return ResponseUtils.ok(JOIN_CHAT_ROOM_SUCCESS);
   }
 

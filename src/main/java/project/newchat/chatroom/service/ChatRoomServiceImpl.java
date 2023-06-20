@@ -3,17 +3,22 @@ package project.newchat.chatroom.service;
 
 import static project.newchat.common.type.ErrorCode.ALREADY_JOIN_ROOM;
 import static project.newchat.common.type.ErrorCode.FAILED_GET_LOCK;
+import static project.newchat.common.type.ErrorCode.INVALID_REQUEST;
+import static project.newchat.common.type.ErrorCode.NEED_TO_PASSWORD;
 import static project.newchat.common.type.ErrorCode.NONE_ROOM;
 import static project.newchat.common.type.ErrorCode.NOT_FOUND_HEART;
+import static project.newchat.common.type.ErrorCode.NOT_FOUND_ROOM;
 import static project.newchat.common.type.ErrorCode.NOT_FOUND_USER;
 import static project.newchat.common.type.ErrorCode.NOT_ROOM_CREATOR;
 import static project.newchat.common.type.ErrorCode.NOT_ROOM_MEMBER;
 import static project.newchat.common.type.ErrorCode.REQUEST_SAME_AS_CURRENT_TITLE;
+import static project.newchat.common.type.ErrorCode.ROOM_PASSWORD_MISMATCH;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +70,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   public ChatRoom createRoom(ChatRoomRequest chatRoomRequest, Long userId) {
     // 유저정보조회
     User findUser = getUser(userId);
+    String password = chatRoomRequest.getPassword();
     // chatroom 생성
     ChatRoom chatRoom = ChatRoom.builder()
         .roomCreator(findUser.getId())
@@ -72,7 +78,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .userCountMax(chatRoomRequest.getUserCountMax())
         .createdAt(LocalDateTime.now())
         .updatedAt(LocalDateTime.now())
+        .isPrivate(false)
         .build();
+    if (password != null) {
+      chatRoom.setPassword(password);
+      chatRoom.setIsPrivate(true);
+    }
     ChatRoom save = chatRoomRepository.save(chatRoom);
 
     // 연관관계 user_chat room 생성
@@ -90,9 +101,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   }
 
   @Override
-//  @Transactional(isolation = Isolation.READ_UNCOMMITTED)
   @Transactional
-  public void joinRoom(Long roomId, Long userId) {
+  public void joinRoom(Long roomId, Long userId, ChatRoomRequest chatRoomRequest) {
     RLock lock = redissonClient.getLock("joinRoomLock:" + roomId);
     try {
       boolean available = lock.tryLock(1, TimeUnit.SECONDS);
@@ -105,31 +115,40 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
       // room 조회
       ChatRoom chatRoom = chatRoomRepository.findById(roomId) // lock (기존)
-          .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_ROOM));
+          .orElseThrow(() -> new CustomException(NOT_FOUND_ROOM));
 
       // user_chatroom 현재 인원 카운트 (비즈니스 로직)
       Long currentUserCount = userChatRoomRepository.countNonLockByChatRoomId(roomId); // lock (기존)
 
-      List<Long> userChatRoomByChatRoomId = userChatRoomRepository
-          .findUserChatRoomByChatRoom_Id(roomId);
-
-      if (userChatRoomByChatRoomId.contains(userId)) {
-        throw new CustomException(ALREADY_JOIN_ROOM);
+      if (chatRoom.getIsPrivate() && chatRoomRequest.getPassword() == null) {
+        throw new CustomException(NEED_TO_PASSWORD);
+      }
+      if (chatRoom.getIsPrivate() && !chatRoomRequest.getPassword().equals(chatRoom.getPassword())) {
+        throw new CustomException(ROOM_PASSWORD_MISMATCH);
       }
 
-      // chatroom 입장
-      if (currentUserCount >= chatRoom.getUserCountMax()) {
-        throw new CustomException(ErrorCode.ROOM_USER_FULL);
-      }
+      if (!chatRoom.getIsPrivate() && chatRoom.getPassword() == null) {
+        List<Long> userList = userChatRoomRepository
+            .findUserChatRoomByChatRoom_Id(roomId);
+        if (userList.contains(userId)) {
+          throw new CustomException(ALREADY_JOIN_ROOM);
+        }
 
-      UserChatRoom userChatRoom = UserChatRoom.builder()
-          .user(findUser)
-          .chatRoom(chatRoom)
-          .build();
-      UserChatRoom save = userChatRoomRepository.save(userChatRoom);
-      String topicName = BASIC_TOPIC + save.getChatRoom().getId();
-      kafkaTemplate.send(topicName, "Subscribed"); // 개선점
-      // 비즈니스 로직 끝
+        // chatroom 입장
+        if (currentUserCount >= chatRoom.getUserCountMax()) {
+          throw new CustomException(ErrorCode.ROOM_USER_FULL);
+        }
+        // 비밀번호 확인
+
+        UserChatRoom userChatRoom = UserChatRoom.builder()
+            .user(findUser)
+            .chatRoom(chatRoom)
+            .build();
+        UserChatRoom save = userChatRoomRepository.save(userChatRoom);
+        String topicName = BASIC_TOPIC + save.getChatRoom().getId();
+        kafkaTemplate.send(topicName, "Subscribed"); // 개선점
+        // 비즈니스 로직 끝
+      }
     } catch (InterruptedException e) {
       throw new CustomException(FAILED_GET_LOCK);
     } finally {
@@ -139,7 +158,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
   // 채팅방 전체 조회
   @Override
-  @Transactional
+  @Transactional(readOnly = true)
   public List<ChatRoomDto> getRoomList(Pageable pageable) {
     Page<ChatRoom> all = chatRoomRepository.findAll(pageable);
     return getChatRoomDtos(all);
@@ -183,9 +202,20 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Transactional
   public void outRoom(Long userId, Long roomId) {
     ChatRoom room = getChatRoom(roomId);
+    List<UserChatRoom> userByChatRoomId = userChatRoomRepository
+        .findUserByChatRoomId(roomId);
+    List<Long> userIds = new ArrayList<>();
+    for (UserChatRoom userChatRoom : userByChatRoomId) {
+      Long id = userChatRoom.getUser().getId();
+      userIds.add(id);
+    }
+    // 만약 방에 없는데 나가기를 시도한 경우
+    if (!userIds.contains(userId)) {
+      throw new CustomException(INVALID_REQUEST);
+    }
     // 방장이 아니라면
     if (!Objects.equals(room.getRoomCreator(), userId)) {
-      userChatRoomRepository.deleteUserChatRoomByUserId(userId);
+      userChatRoomRepository.deleteUserChatRoomByUserId(userId); // point select???
       return;
     }
     // 방장이라면 방 삭제

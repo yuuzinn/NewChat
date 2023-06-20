@@ -36,7 +36,9 @@ public enum ErrorCode {
   NOT_ROOM_MEMBER("채팅방에 속한 유저가 아닙니다."),
   ALREADY_HEART_TO_ROOM("이미 해당 채팅방에 좋아요를 누르셨습니다."),
   NOT_EXIST_ROOM_HEART("해당 채팅방에 좋아요가 눌러져 있지 않습니다."),
-  NOT_FOUND_HEART("좋아요 누른 채팅방이 없습니다.")
+  NOT_FOUND_HEART("좋아요 누른 채팅방이 없습니다."),
+  ROOM_PASSWORD_MISMATCH("방 비밀번호 불일치"),
+  NEED_TO_PASSWORD("비밀번호를 입력해 주세요.")
   ;
 
   private final String description;
