@@ -17,10 +17,12 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import project.newchat.chatmsg.repository.ChatMsgRepository;
@@ -55,9 +57,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
   private final RedissonClient redissonClient;
 
+  private final KafkaTemplate<String, String> kafkaTemplate;
+  private final String BASIC_TOPIC = "CHAT_ROOM";
+
   @Override
   @Transactional
-  public void createRoom(ChatRoomRequest chatRoomRequest, Long userId) {
+  public ChatRoom createRoom(ChatRoomRequest chatRoomRequest, Long userId) {
     // 유저정보조회
     User findUser = getUser(userId);
     // chatroom 생성
@@ -77,6 +82,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .build();
     // save
     userChatRoomRepository.save(userChatRoom);
+    String topicName = BASIC_TOPIC + save.getId();
+    NewTopic newTopic = new NewTopic(topicName, 1, (short) 1);
+    // Kafka Topic에 구독자 추가
+    kafkaTemplate.send(newTopic.name(), "Subscribed");
+    return save;
   }
 
   @Override
@@ -116,7 +126,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
           .user(findUser)
           .chatRoom(chatRoom)
           .build();
-      userChatRoomRepository.save(userChatRoom);
+      UserChatRoom save = userChatRoomRepository.save(userChatRoom);
+      String topicName = BASIC_TOPIC + save.getChatRoom().getId();
+      kafkaTemplate.send(topicName, "Subscribed"); // 개선점
       // 비즈니스 로직 끝
     } catch (InterruptedException e) {
       throw new CustomException(FAILED_GET_LOCK);
