@@ -36,6 +36,10 @@ public class ChatRoom {
 
     private Integer userCountMax; // 최대 인원 8명
 
+    private String password;
+
+    private Boolean isPrivate;
+
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<UserChatRoom> userChatRooms;

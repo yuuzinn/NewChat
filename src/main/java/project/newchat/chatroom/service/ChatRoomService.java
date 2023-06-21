@@ -13,7 +13,7 @@ public interface ChatRoomService {
 
   ChatRoom createRoom(ChatRoomRequest chatRoomRequest, Long userId);
 
-  void joinRoom(Long roomId, Long userId);
+  void joinRoom(Long roomId, Long userId, ChatRoomRequest chatRoomRequest);
 
   List<ChatRoomDto> getRoomList(Pageable pageable);
 

@@ -64,7 +64,7 @@ public class ConcurrencyChatRoomTest {
     IntStream.range(0, 30).forEach(e -> executorService.submit(() -> {
       try {
         try {
-          chatRoomService.joinRoom(save.getId(), users.get(e).getId());
+          chatRoomService.joinRoom(save.getId(), users.get(e).getId(), null);
         } catch (Exception ex) {
           assertThat(ex).isNull(); // 예외 발생 시 테스트를 실패로 처리
         }

@@ -20,6 +20,6 @@ public class ChatRoomRequest {
   @NotNull
   @Max(8)
   private Integer userCountMax;
-
-
+  @Length(min = 4, max = 20)
+  private String password;
 }

@@ -10,9 +10,6 @@ import project.newchat.userchatroom.domain.UserChatRoom;
 @Repository
 public interface UserChatRoomRepository extends JpaRepository<UserChatRoom, Long> {
 
-//  @Lock(LockModeType.PESSIMISTIC_WRITE)
-//  @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "1000")})
-  Long countByChatRoomId(Long roomId); // 비관적 락
   @Query("select count(*) from UserChatRoom u where u.chatRoom.id = :roomId")
   Long countNonLockByChatRoomId(@Param("roomId")Long roomId); // test 용도
 
@@ -24,4 +21,6 @@ public interface UserChatRoomRepository extends JpaRepository<UserChatRoom, Long
   List<Long> findUserChatRoomByChatRoom_Id(Long chatRoomId);
 
   List<UserChatRoom> findUserChatRoomByChatRoomId(Long roomId);
+
+  List<UserChatRoom> findUserByChatRoomId(Long roomId);
 }
