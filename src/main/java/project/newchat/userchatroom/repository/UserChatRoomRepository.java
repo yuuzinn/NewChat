@@ -1,6 +1,7 @@
 package project.newchat.userchatroom.repository;
 
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,6 @@ public interface UserChatRoomRepository extends JpaRepository<UserChatRoom, Long
   List<UserChatRoom> findUserChatRoomByChatRoomId(Long roomId);
 
   List<UserChatRoom> findUserByChatRoomId(Long roomId);
+
+  Optional<UserChatRoom> findByUserId(Long userId);;
 }
