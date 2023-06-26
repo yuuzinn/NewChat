@@ -1,6 +1,7 @@
 package project.newchat.chatroom.service;
 
 
+import static java.time.LocalDateTime.now;
 import static project.newchat.common.type.ErrorCode.ALREADY_JOIN_ROOM;
 import static project.newchat.common.type.ErrorCode.FAILED_GET_LOCK;
 import static project.newchat.common.type.ErrorCode.INVALID_REQUEST;
@@ -14,11 +15,9 @@ import static project.newchat.common.type.ErrorCode.NOT_ROOM_MEMBER;
 import static project.newchat.common.type.ErrorCode.REQUEST_SAME_AS_CURRENT_TITLE;
 import static project.newchat.common.type.ErrorCode.ROOM_PASSWORD_MISMATCH;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -76,8 +75,8 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .roomCreator(findUser.getId())
         .title(chatRoomRequest.getTitle())
         .userCountMax(chatRoomRequest.getUserCountMax())
-        .createdAt(LocalDateTime.now())
-        .updatedAt(LocalDateTime.now())
+        .createdAt(now())
+        .updatedAt(now())
         .isPrivate(false)
         .build();
     if (password != null) {
@@ -90,6 +89,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     UserChatRoom userChatRoom = UserChatRoom.builder()
         .user(findUser)
         .chatRoom(save)
+        .joinDt(now())
         .build();
     // save
     userChatRoomRepository.save(userChatRoom);
@@ -143,6 +143,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         UserChatRoom userChatRoom = UserChatRoom.builder()
             .user(findUser)
             .chatRoom(chatRoom)
+            .joinDt(now())
             .build();
         UserChatRoom save = userChatRoomRepository.save(userChatRoom);
         String topicName = BASIC_TOPIC + save.getChatRoom().getId();
@@ -246,7 +247,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     if (currentRoomTitle.equals(chatRoomUpdateRequest.getTitle())) {
       throw new CustomException(REQUEST_SAME_AS_CURRENT_TITLE);
     }
-    room.update(chatRoomUpdateRequest.getTitle(), LocalDateTime.now());
+    room.update(chatRoomUpdateRequest.getTitle(), now());
     chatRoomRepository.save(room);
   }
 

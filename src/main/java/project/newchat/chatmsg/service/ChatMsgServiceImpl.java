@@ -4,10 +4,12 @@ import static project.newchat.common.type.ErrorCode.NOT_FOUND_ROOM;
 import static project.newchat.common.type.ErrorCode.NOT_FOUND_USER;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import project.newchat.chatmsg.domain.ChatMsg;
 import project.newchat.chatmsg.domain.request.ChatMsgRequest;
 import project.newchat.chatmsg.domain.response.ChatMsgResponse;
@@ -20,6 +22,8 @@ import project.newchat.common.exception.CustomException;
 import project.newchat.common.kafka.Producers;
 import project.newchat.user.domain.User;
 import project.newchat.user.repository.UserRepository;
+import project.newchat.userchatroom.domain.UserChatRoom;
+import project.newchat.userchatroom.repository.UserChatRoomRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,8 @@ public class ChatMsgServiceImpl implements ChatMsgService {
   private final UserRepository userRepository;
   private final ChatRoomRepository chatRoomRepository;
   private final ChatMsgCustomRepository chatMsgCustomRepository;
+
+  private final UserChatRoomRepository userChatRoomRepository;
 
   private final String BASIC_TOPIC = "CHAT_ROOM";
   private final Producers producers;
@@ -61,16 +67,30 @@ public class ChatMsgServiceImpl implements ChatMsgService {
   }
 
   @Override
+  @Transactional(readOnly = true)
   public List<ChatMsgDto> getRoomChatMsgList(Long roomId, Long userId, Long lastId) {
     userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
     List<ChatMsg> chatMsgsList = chatMsgCustomRepository.findChatRoomIdByChatMsg(roomId, lastId);
-    return chatMsgsList.stream().map(chatMsg -> new ChatMsgDto(
-        chatMsg.getId(),
-        chatMsg.getUser().getId(),
-        chatMsg.getUser().getNickname(),
-        chatMsg.getMessage(),
-        chatMsg.getSendTime())).collect(Collectors.toList());
+    Optional<UserChatRoom> joinUser = userChatRoomRepository.findByUserId(userId);
+    if (joinUser.isEmpty()) {
+      throw new CustomException(NOT_FOUND_USER);
+    }
+    LocalDateTime joinDt = joinUser.get().getJoinDt();
+    List<ChatMsgDto> chatMsgDtos = new ArrayList<>();
+    for (ChatMsg chatMsg : chatMsgsList) {
+      ChatMsgDto build = ChatMsgDto.builder()
+          .chatMsgId(chatMsg.getId())
+          .nickname(chatMsg.getUser().getNickname())
+          .sendTime(chatMsg.getSendTime())
+          .message(chatMsg.getMessage())
+          .userId(chatMsg.getUser().getId())
+          .build();
+      if (build.getSendTime().isAfter(joinDt)) {
+        chatMsgDtos.add(build);
+      }
+    }
+    return chatMsgDtos;
   }
 }
