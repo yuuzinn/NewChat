@@ -50,6 +50,7 @@
 # Stack ⚒️
 - Java 11
 - Spring boot
+- JPA
 - Gradle
 - MySQL
 - Web Socket
