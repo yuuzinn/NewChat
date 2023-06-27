@@ -83,10 +83,11 @@
 
 # ERD ver 1.0 
 ![image](https://user-images.githubusercontent.com/119172260/236689573-141d01e8-7992-4827-8721-f2ca09adb72e.png)
-## ERD ver 1.x
-![image](https://github.com/yeb0/NewChat/assets/119172260/8cdff457-ab93-4a7a-a13e-fe03e1f6dcff)
+## ERD ver 1.X
+![image](https://github.com/yeb0/NewChat/assets/119172260/8f014534-eea4-4f74-bfb9-a272386f2827)
 
-# Architecture ver 1.0
+
+# Architecture ver 1.0(1.X)
 
 
 ![image](https://github.com/yeb0/NewChat/assets/119172260/c2ef6347-5432-43ab-88b1-e2720932ed03)
@@ -99,6 +100,7 @@
 # Stack ⚒️
 - Java 11
 - Spring boot
+- JPA
 - Gradle
 - MySQL
 - Web Socket
