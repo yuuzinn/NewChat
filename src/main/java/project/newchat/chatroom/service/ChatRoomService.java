@@ -33,4 +33,6 @@ public interface ChatRoomService {
   List<ChatRoomUserDto> getRoomUsers(Long roomId, Long userId);
 
   List<ChatRoomDto> myHeartRoomList(Long userId, Pageable pageable);
+
+  List<ChatRoomDto> searchRoomByTitle(String roomName, Long userId, Pageable pageable);
 }
