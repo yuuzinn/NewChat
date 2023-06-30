@@ -3,14 +3,17 @@ package project.newchat.chatroom.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
 import project.newchat.chatroom.domain.ChatRoom;
+import project.newchat.chatroom.dto.ChatRoomDto;
 import project.newchat.chatroom.repository.ChatRoomRepository;
 import project.newchat.common.exception.CustomException;
 import project.newchat.common.type.ErrorCode;

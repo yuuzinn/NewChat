@@ -18,6 +18,7 @@ import static project.newchat.common.type.ErrorCode.ROOM_PASSWORD_MISMATCH;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -299,6 +300,31 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     List<ChatRoom> chatRoomList = chatRoomByInId.toList();
     List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
     for (ChatRoom chatRoom : chatRoomList) {
+      ChatRoomDto build = ChatRoomDto.builder()
+          .id(chatRoom.getId())
+          .title(chatRoom.getTitle())
+          .heartCount(chatRoom.getHearts().size())
+          .currentUserCount((long) chatRoom.getUserChatRooms().size())
+          .userCountMax(chatRoom.getUserCountMax())
+          .build();
+      chatRoomDtos.add(build);
+    }
+    return chatRoomDtos;
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<ChatRoomDto> searchRoomByTitle(String roomName, Long userId, Pageable pageable) {
+    getUser(userId);
+    Page<ChatRoom> search = chatRoomRepository.findChatRoomWithPartOfTitle(roomName, pageable);
+
+    List<ChatRoom> searchRoomList = search.toList();
+    List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
+    if (searchRoomList.size() == 0) {
+      throw new CustomException(NOT_FOUND_ROOM);
+    }
+
+    for (ChatRoom chatRoom : searchRoomList) {
       ChatRoomDto build = ChatRoomDto.builder()
           .id(chatRoom.getId())
           .title(chatRoom.getTitle())

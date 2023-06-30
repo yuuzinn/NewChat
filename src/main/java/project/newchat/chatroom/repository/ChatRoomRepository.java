@@ -29,4 +29,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
   @Query("SELECT c FROM ChatRoom c WHERE c.id IN :ids ORDER BY c.createdAt DESC")
   Page<ChatRoom> findChatRoomByInId(@Param("ids") List<Long> ids, Pageable pageable);
+
+  @Query("SELECT c FROM ChatRoom c WHERE c.title LIKE CONCAT('%', :title, '%')")
+  Page<ChatRoom> findChatRoomWithPartOfTitle(@Param("title") String title, Pageable pageable);
 }

@@ -1,5 +1,6 @@
 package project.newchat.chatroom.controller;
 
+import static project.newchat.common.type.ErrorCode.NEED_TO_INPUT_TITLE;
 import static project.newchat.common.type.ResponseMessage.CHAT_ROOM_ALL_BY_LIST_SELECT_SUCCESS;
 import static project.newchat.common.type.ResponseMessage.CHAT_ROOM_USERS_SELECT_SUCCESS;
 import static project.newchat.common.type.ResponseMessage.CHAT_ROOM_USER_SELF_BY_LIST_SELECT_SUCCESS;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
 import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
@@ -34,6 +36,7 @@ import project.newchat.chatroom.dto.ChatRoomDto;
 import project.newchat.chatroom.dto.ChatRoomUserDto;
 import project.newchat.chatroom.service.ChatRoomService;
 import project.newchat.common.config.LoginCheck;
+import project.newchat.common.exception.CustomException;
 import project.newchat.common.util.ResponseUtils;
 
 
@@ -180,6 +183,18 @@ public class ChatRoomController {
     if (list.size() == 0) {
       return ResponseUtils.notFound(NOT_EXIST_CHAT_ROOM);
     }
+    return ResponseUtils.ok(CHAT_ROOM_ALL_BY_LIST_SELECT_SUCCESS, list);
+  }
+
+  @GetMapping("/room/search")
+  @LoginCheck
+  public ResponseEntity<Object> searchRoomName(
+      @RequestParam(name = "roomName") String roomName
+      , HttpSession session, Pageable pageable) {
+    Long userId = (Long) session.getAttribute("user");
+    if (roomName.isEmpty()) throw new CustomException(NEED_TO_INPUT_TITLE);
+    List<ChatRoomDto> list = chatRoomService
+        .searchRoomByTitle(roomName, userId, pageable);
     return ResponseUtils.ok(CHAT_ROOM_ALL_BY_LIST_SELECT_SUCCESS, list);
   }
 }
