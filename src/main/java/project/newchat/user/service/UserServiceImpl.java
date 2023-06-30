@@ -17,6 +17,7 @@ import project.newchat.user.domain.request.LoginRequest;
 import project.newchat.user.domain.request.TestUserRequest;
 import project.newchat.user.domain.request.UpdateRequest;
 import project.newchat.user.domain.request.UserRequest;
+import project.newchat.user.domain.response.UserSearchResponse;
 import project.newchat.user.dto.UserDto;
 import project.newchat.user.repository.UserRepository;
 
@@ -125,6 +126,21 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
     user.setStatus(false);
     userRepository.save(user);
+  }
+
+  @Override
+  public UserSearchResponse searchUserByNickname(Long userId, String nickname) {
+    userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+    Optional<User> searchUser = userRepository.findByNicknameLike(nickname);
+    if (searchUser.isEmpty()) {
+      throw new CustomException(NOT_FOUND_USER);
+    }
+    return UserSearchResponse.builder()
+        .id(searchUser.get().getId())
+        .nickname(nickname)
+        .status(searchUser.get().getStatus())
+        .build();
   }
 
   public boolean isSamePassword(String password, String dbUserPassword) {

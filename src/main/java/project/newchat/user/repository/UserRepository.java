@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import project.newchat.user.domain.User;
+import project.newchat.user.domain.response.UserSearchResponse;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
@@ -16,4 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   @Query("select u from User u where u.id in (:ids) order by u.status desc ")
   List<User> findUserById(@Param("ids") List<Long> ids, Pageable pageable);
+
+  @Query("SELECT u FROM User u WHERE u.nickname LIKE :nickname")
+  Optional<User> findByNicknameLike(@Param ("nickname")String nickname);
 }

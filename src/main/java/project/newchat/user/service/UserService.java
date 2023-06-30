@@ -8,6 +8,7 @@ import project.newchat.user.domain.request.UpdateRequest;
 import project.newchat.user.domain.request.UserRequest;
 
 import javax.servlet.http.HttpSession;
+import project.newchat.user.domain.response.UserSearchResponse;
 import project.newchat.user.dto.UserDto;
 
 @Service
@@ -26,4 +27,5 @@ public interface UserService {
 
   void logout(Long userId);
 
+  UserSearchResponse searchUserByNickname(Long userId, String nickname);
 }

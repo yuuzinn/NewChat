@@ -13,6 +13,7 @@ public enum ResponseMessage {
   LOGIN_SUCCESS,
   LOGOUT_SUCCESS,
   USER_UPDATE_SUCCESS,
+  USER_SEARCH_SUCCESS,
   /**
    * CHAT_ROOM
    */
