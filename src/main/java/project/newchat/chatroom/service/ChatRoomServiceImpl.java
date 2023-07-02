@@ -316,7 +316,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   @Transactional(readOnly = true)
   public List<ChatRoomDto> searchRoomByTitle(String roomName, Long userId, Pageable pageable) {
     getUser(userId);
-    Page<ChatRoom> search = chatRoomRepository.findChatRoomWithPartOfTitle(roomName, pageable);
+    Page<ChatRoom> search = chatRoomRepository.findByTitleContaining(roomName, pageable);
 
     List<ChatRoom> searchRoomList = search.toList();
     List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
