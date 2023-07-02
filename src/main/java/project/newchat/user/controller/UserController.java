@@ -3,14 +3,17 @@ package project.newchat.user.controller;
 import static project.newchat.common.type.ResponseMessage.CREATE_USER;
 import static project.newchat.common.type.ResponseMessage.LOGIN_SUCCESS;
 import static project.newchat.common.type.ResponseMessage.LOGOUT_SUCCESS;
+import static project.newchat.common.type.ResponseMessage.USER_SEARCH_SUCCESS;
 import static project.newchat.common.type.ResponseMessage.USER_UPDATE_SUCCESS;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import project.newchat.common.config.LoginCheck;
 import project.newchat.common.type.ResponseMessage;
@@ -20,6 +23,7 @@ import project.newchat.user.domain.request.LoginRequest;
 import project.newchat.user.domain.request.TestUserRequest;
 import project.newchat.user.domain.request.UpdateRequest;
 import project.newchat.user.domain.request.UserRequest;
+import project.newchat.user.domain.response.UserSearchResponse;
 import project.newchat.user.dto.UserDto;
 import project.newchat.user.service.UserService;
 
@@ -73,5 +77,15 @@ public class UserController {
     Long userId = (Long) session.getAttribute("user");
     userService.update(userId, updateRequest);
     return ResponseUtils.ok(USER_UPDATE_SUCCESS);
+  }
+
+  @GetMapping("/search")
+  @LoginCheck
+  public ResponseEntity<Object> searchUserByNickname(
+      @RequestParam String nickname, HttpSession session) {
+    Long userId = (Long) session.getAttribute("user");
+    UserSearchResponse searchUser = userService
+        .searchUserByNickname(userId, nickname);
+    return ResponseUtils.ok(USER_SEARCH_SUCCESS, searchUser);
   }
 }
