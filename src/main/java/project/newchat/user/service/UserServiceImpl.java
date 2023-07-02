@@ -1,6 +1,7 @@
 package project.newchat.user.service;
 
 import static project.newchat.common.type.ErrorCode.ALREADY_USER_ID;
+import static project.newchat.common.type.ErrorCode.ALREADY_USER_NICKNAME;
 import static project.newchat.common.type.ErrorCode.NOT_FOUND_USER;
 import static project.newchat.common.type.ErrorCode.NOT_SAME_PASSWORD;
 import static project.newchat.common.type.ErrorCode.REQUEST_SAME_AS_CURRENT_NICKNAME;
@@ -33,6 +34,11 @@ public class UserServiceImpl implements UserService {
     Optional<User> email = userRepository.findByEmail(user.getEmail());
     if (email.isPresent()) {
       throw new CustomException(ALREADY_USER_ID, user.getEmail());
+    }
+    Optional<User> byNickname = userRepository
+        .findByNickname(user.getNickname());
+    if (byNickname.isPresent()) {
+      throw new CustomException(ALREADY_USER_NICKNAME, byNickname.get().getNickname());
     }
     String userPasswordEncode = passwordEncoder.encode(user.getPassword());
     User userSave = User.builder()
@@ -112,6 +118,11 @@ public class UserServiceImpl implements UserService {
   public void update(Long userId, UpdateRequest updateRequest) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+    Optional<User> byNickname = userRepository.
+        findByNickname(updateRequest.getNickname());
+    if (byNickname.isPresent()) {
+      throw new CustomException(ALREADY_USER_NICKNAME, updateRequest.getNickname());
+    }
     String currentNickname = user.getNickname();
     if (currentNickname.equals(updateRequest.getNickname())) {
       throw new CustomException(REQUEST_SAME_AS_CURRENT_NICKNAME); // 현재 닉네임과 바꿀 닉네임이 같을 경우
