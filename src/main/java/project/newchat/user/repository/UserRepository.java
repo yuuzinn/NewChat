@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<User> findByEmail(String email);
 
+  Optional<User> findByNickname(String nickname);
+
   Optional<User> findUserByEmailAndPassword(String email, String password);
 
   @Query("select u from User u where u.id in (:ids) order by u.status desc ")

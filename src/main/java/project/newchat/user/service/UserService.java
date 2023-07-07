@@ -14,17 +14,28 @@ import project.newchat.user.dto.UserDto;
 @Service
 public interface UserService {
 
+  /**
+   * 사용자 회원가입
+   */
   UserDto signUp(UserRequest user);
 
   User signUpTest(UserRequest user);
 
   UserDto signUpTe2(TestUserRequest test);
 
+  /**
+   * 로그인
+   */
   User login(LoginRequest user);
 
-
+  /**
+   * 사용자 업데이트 (닉네임)
+   */
   void update(Long userId, UpdateRequest updateRequest);
 
+  /**
+   * 로그아웃
+   */
   void logout(Long userId);
 
   UserSearchResponse searchUserByNickname(Long userId, String nickname);
