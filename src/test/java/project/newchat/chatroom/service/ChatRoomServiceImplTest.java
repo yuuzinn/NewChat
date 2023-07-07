@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
+import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
 import project.newchat.chatroom.domain.ChatRoom;
 import project.newchat.chatroom.dto.ChatRoomDto;
 import project.newchat.chatroom.repository.ChatRoomRepository;
@@ -66,8 +67,9 @@ class ChatRoomServiceImplTest {
         .roomCreator(1L)
         .title("test")
         .userCountMax(8)
+        .isPrivate(false)
+        .password(null)
         .build();
-
     chatRoomRepository.save(test);
     chatRoomService.joinRoom(1L, 2L, null);
 
@@ -75,5 +77,25 @@ class ChatRoomServiceImplTest {
         chatRoomService.joinRoom(1L, 2L, null));
     assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.ALREADY_JOIN_ROOM);
     assertThat(exception.getErrorMessage()).isEqualTo("이미 채팅방에 입장해 있습니다.");
+  }
+
+  @Test
+  @DisplayName("채팅방 제목 업데이트 성공")
+  void update_roomTitle() {
+    UserRequest user = new UserRequest("test@test.com", "1234", "test");
+    userService.signUpTest(user);
+    ChatRoom test = ChatRoom.builder()
+        .roomCreator(1L)
+        .title("test")
+        .userCountMax(8)
+        .isPrivate(false)
+        .password(null)
+        .build();
+    chatRoomRepository.save(test);
+    ChatRoomUpdateRequest chatRoomUpdateRequest = new ChatRoomUpdateRequest();
+    chatRoomUpdateRequest.setTitle("updateTitle");
+    chatRoomService.updateRoom(1L, chatRoomUpdateRequest, 1L);
+
+    assertThat(test.getTitle()).isEqualTo("updateTitle");
   }
 }
