@@ -54,8 +54,11 @@ public class UserServiceImpl implements UserService {
         .email(userSave.getEmail())
         .nickname(userSave.getNickname())
         .build();
-
-    userRepository.save(userSave);
+    try {
+      userRepository.save(userSave);
+    } catch (DuplicateKeyException e) {
+      throw new CustomException(ALREADY_USER_NICKNAME);
+    }
     return userDto;
   }
 
