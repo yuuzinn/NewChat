@@ -45,7 +45,7 @@ public class FriendServiceImpl implements FriendService {
   @Override
   @Transactional
   public void addFriend(Long fromUserId, Long toUserId) {
-    final String lockName = toUserId + " - lock"; // key 값 변경
+    final String lockName = fromUserId + " - lock"; // key 값 변경
     final RLock lock = redissonClient.getLock(lockName);
     try {
       boolean available = lock.tryLock(1, TimeUnit.SECONDS);
@@ -109,7 +109,7 @@ public class FriendServiceImpl implements FriendService {
   @Override
   @Transactional
   public void receive(Long fromUserId, Long toUserId) {
-    final String lockName = fromUserId + " - lock";
+    final String lockName = toUserId + " - lock";
     final RLock lock = redissonClient.getLock(lockName);
     final String worker = Thread.currentThread().getName();
     try {
