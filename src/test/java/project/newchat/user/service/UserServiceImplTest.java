@@ -16,6 +16,7 @@ import project.newchat.user.domain.User;
 import project.newchat.user.domain.request.LoginRequest;
 import project.newchat.user.domain.request.UpdateRequest;
 import project.newchat.user.domain.request.UserRequest;
+import project.newchat.user.domain.response.UserSearchResponse;
 import project.newchat.user.dto.UserDto;
 
 
@@ -118,5 +119,18 @@ class UserServiceImplTest {
         () -> userService.update(1L, request));
     assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.ALREADY_USER_NICKNAME);
 
+  }
+  @Test
+  @DisplayName("회원 검색 성공")
+  void search_user() {
+    // given
+    UserRequest userRequest1 = new UserRequest("test1234@naver.com", "12345", "test");
+    userService.signUp(userRequest1);
+    UserRequest userRequest2 = new UserRequest("test12345@naver.com", "12345", "updateTest");
+    userService.signUp(userRequest2);
+    // then
+    UserSearchResponse updateTest = userService.searchUserByNickname(1L, "updateTest");
+    // when
+    assertThat(updateTest.getNickname()).isEqualTo(userRequest2.getNickname());
   }
 }
