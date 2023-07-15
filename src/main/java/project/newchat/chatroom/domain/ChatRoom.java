@@ -59,7 +59,6 @@ public class ChatRoom {
             ", updatedAt=" + updatedAt +
             ", roomCreator=" + roomCreator +
             ", userCountMax=" + userCountMax +
-            ", userChatRooms=" + userChatRooms.size() +
             '}';
     }
     public void update(String title, LocalDateTime updatedAt) {

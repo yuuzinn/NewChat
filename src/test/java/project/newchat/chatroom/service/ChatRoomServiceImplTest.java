@@ -49,10 +49,10 @@ class ChatRoomServiceImplTest {
     Long id = login.getId();
 
     ChatRoomRequest chatRoomRequest = new ChatRoomRequest("testTitle", 8, null);
-    chatRoomService.createRoom(chatRoomRequest, id);
+    ChatRoom room = chatRoomService.createRoom(chatRoomRequest, id);
 
-    assertThat(chatRoomRequest.getTitle()).isEqualTo("testTitle");
-    assertThat(chatRoomRequest.getUserCountMax()).isEqualTo(8);
+    assertThat(room.getTitle()).isEqualTo("testTitle");
+    assertThat(room.getUserCountMax()).isEqualTo(8);
   }
   @Test
   @DisplayName("동일 채팅방 두 번 이상 입장 시도(실패가 되어야 한다.)")

@@ -92,6 +92,10 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .chatRoom(save)
         .joinDt(now())
         .build();
+    System.out.println("---------------------------------");
+    System.out.println("userChatRoom = " + userChatRoom.getUser());
+    System.out.println("userChatRoom = " + userChatRoom.getChatRoom());
+    System.out.println("---------------------------------");
     // save
     userChatRoomRepository.save(userChatRoom);
     String topicName = BASIC_TOPIC + save.getId();
