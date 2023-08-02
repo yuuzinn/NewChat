@@ -86,19 +86,16 @@
     - 사용자(자신)가 좋아요를 누른 방들의 목록을 조회합니다.
     - 좋아요를 누른 방들을 조회할 때 결과값은 등록일 순으로 조회됩니다.
 
-# ERD ver 1.0 
-![image](https://user-images.githubusercontent.com/119172260/236689573-141d01e8-7992-4827-8721-f2ca09adb72e.png)
-## ERD ver 1.X
+
+## ERD ver 2
 ![image](https://github.com/yeb0/NewChat/assets/119172260/8f014534-eea4-4f74-bfb9-a272386f2827)
 
 
-# Architecture ver 1.0(1.X)
+# Architecture ver 2.0
 
 
-![image](https://github.com/yeb0/NewChat/assets/119172260/c2ef6347-5432-43ab-88b1-e2720932ed03)
-<!-- # Architecture ver 2.0 (~ing) 
+![image](https://github.com/yeb0/NewChat/assets/119172260/c21b9092-24f2-42ff-ac9f-3da502701ee8)
 
-![image](https://github.com/yeb0/NewChat/assets/119172260/aa8a9a1a-1ef4-4311-b699-4e39ab8d8ec5) -->
 
 
 
