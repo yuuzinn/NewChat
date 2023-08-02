@@ -1,5 +1,6 @@
 package project.newchat.userchatroom.domain;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,4 +30,6 @@ public class UserChatRoom {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "chat_room_id")
   private ChatRoom chatRoom;
+
+  private LocalDateTime joinDt;
 }

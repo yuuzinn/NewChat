@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.newchat.chatmsg.domain.ChatMsg;
+import project.newchat.heart.domain.Heart;
 import project.newchat.user.domain.User;
 import project.newchat.userchatroom.domain.UserChatRoom;
 
@@ -15,6 +17,7 @@ import java.util.List;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRoom {
@@ -33,12 +36,19 @@ public class ChatRoom {
 
     private Integer userCountMax; // 최대 인원 8명
 
+    private String password;
+
+    private Boolean isPrivate;
+
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<UserChatRoom> userChatRooms;
 
     @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
     private List<ChatMsg> chatMsgs;
+
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY)
+    private List<Heart> hearts;
 
     @Override
     public String toString() {
@@ -49,7 +59,10 @@ public class ChatRoom {
             ", updatedAt=" + updatedAt +
             ", roomCreator=" + roomCreator +
             ", userCountMax=" + userCountMax +
-            ", userChatRooms=" + userChatRooms.size() +
             '}';
+    }
+    public void update(String title, LocalDateTime updatedAt) {
+        this.setTitle(title);
+        this.setUpdatedAt(updatedAt);
     }
 }

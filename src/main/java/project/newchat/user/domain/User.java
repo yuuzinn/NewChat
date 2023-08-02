@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import project.newchat.chatmsg.domain.ChatMsg;
-import project.newchat.chatroom.domain.ChatRoom;
+import project.newchat.friend.domain.Friend;
+import project.newchat.heart.domain.Heart;
 import project.newchat.userchatroom.domain.UserChatRoom;
 
 import javax.persistence.*;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,9 +38,23 @@ public class User {
 
   private LocalDateTime updatedAt;
 
+  private Boolean status; // 로그인이면 true, 로그아웃 false
+
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<UserChatRoom> userChatRooms;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   private List<ChatMsg> chatMsgs;
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  private List<Heart> hearts;
+
+  public void update(String nickname, LocalDateTime updatedAt) {
+    this.setNickname(nickname);
+    this.setUpdatedAt(updatedAt);
+  }
+
+  public User(Long id) {
+    this.id = id;
+  }
 }
