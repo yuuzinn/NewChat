@@ -7,7 +7,13 @@ import project.newchat.chatmsg.dto.ChatMsgDto;
 
 public interface ChatMsgService {
 
+  /**
+   * 채팅 보내기
+   */
   ChatMsgResponse sendMessage(ChatMsgRequest message, Long userId, Long roomId);
 
+  /**
+   * 채팅 조회
+   */
   List<ChatMsgDto> getRoomChatMsgList(Long roomId, Long userId, Long lastId);
 }

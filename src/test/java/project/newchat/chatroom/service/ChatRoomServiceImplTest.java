@@ -3,14 +3,18 @@ package project.newchat.chatroom.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import project.newchat.chatroom.controller.request.ChatRoomRequest;
+import project.newchat.chatroom.controller.request.ChatRoomUpdateRequest;
 import project.newchat.chatroom.domain.ChatRoom;
+import project.newchat.chatroom.dto.ChatRoomDto;
 import project.newchat.chatroom.repository.ChatRoomRepository;
 import project.newchat.common.exception.CustomException;
 import project.newchat.common.type.ErrorCode;
@@ -44,11 +48,11 @@ class ChatRoomServiceImplTest {
 
     Long id = login.getId();
 
-    ChatRoomRequest chatRoomRequest = new ChatRoomRequest("testTitle", 8);
-    chatRoomService.createRoom(chatRoomRequest, id);
+    ChatRoomRequest chatRoomRequest = new ChatRoomRequest("testTitle", 8, null);
+    ChatRoom room = chatRoomService.createRoom(chatRoomRequest, id);
 
-    assertThat(chatRoomRequest.getTitle()).isEqualTo("testTitle");
-    assertThat(chatRoomRequest.getUserCountMax()).isEqualTo(8);
+    assertThat(room.getTitle()).isEqualTo("testTitle");
+    assertThat(room.getUserCountMax()).isEqualTo(8);
   }
   @Test
   @DisplayName("동일 채팅방 두 번 이상 입장 시도(실패가 되어야 한다.)")
@@ -63,14 +67,35 @@ class ChatRoomServiceImplTest {
         .roomCreator(1L)
         .title("test")
         .userCountMax(8)
+        .isPrivate(false)
+        .password(null)
         .build();
-
     chatRoomRepository.save(test);
-    chatRoomService.joinRoom(1L, 2L);
+    chatRoomService.joinRoom(1L, 2L, null);
 
     CustomException exception = assertThrows(CustomException.class, () ->
-        chatRoomService.joinRoom(1L, 2L));
+        chatRoomService.joinRoom(1L, 2L, null));
     assertThat(exception.getErrorCode()).isEqualTo(ErrorCode.ALREADY_JOIN_ROOM);
     assertThat(exception.getErrorMessage()).isEqualTo("이미 채팅방에 입장해 있습니다.");
+  }
+
+  @Test
+  @DisplayName("채팅방 제목 업데이트 성공")
+  void update_roomTitle() {
+    UserRequest user = new UserRequest("test@test.com", "1234", "test");
+    userService.signUpTest(user);
+    ChatRoom test = ChatRoom.builder()
+        .roomCreator(1L)
+        .title("test")
+        .userCountMax(8)
+        .isPrivate(false)
+        .password(null)
+        .build();
+    chatRoomRepository.save(test);
+    ChatRoomUpdateRequest chatRoomUpdateRequest = new ChatRoomUpdateRequest();
+    chatRoomUpdateRequest.setTitle("updateTitle");
+    chatRoomService.updateRoom(1L, chatRoomUpdateRequest, 1L);
+
+    assertThat(test.getTitle()).isEqualTo("updateTitle");
   }
 }
