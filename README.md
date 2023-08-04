@@ -6,6 +6,7 @@
 
 06.02) 2.0으로 넘어가기 전, 몇 가지 기능이 추가되었습니다. (친구 기능 추가) <br>
 06.07) 로그인 상태값 추가, 채팅방에 있는 사용자들을 조회할 수 있게 되었습니다.
+08.04) 2.0 v2 
 
 ## **User**
 
@@ -88,7 +89,7 @@
 
 # ERD ver 1.0 
 ![image](https://user-images.githubusercontent.com/119172260/236689573-141d01e8-7992-4827-8721-f2ca09adb72e.png)
-## ERD ver 1.X
+## ERD ver 2.0
 ![image](https://github.com/yeb0/NewChat/assets/119172260/8f014534-eea4-4f74-bfb9-a272386f2827)
 
 
@@ -96,9 +97,9 @@
 
 
 ![image](https://github.com/yeb0/NewChat/assets/119172260/c2ef6347-5432-43ab-88b1-e2720932ed03)
-<!-- # Architecture ver 2.0 (~ing) 
+ # Architecture ver 2.0 
 
-![image](https://github.com/yeb0/NewChat/assets/119172260/aa8a9a1a-1ef4-4311-b699-4e39ab8d8ec5) -->
+![image](https://github.com/yeb0/NewChat/assets/119172260/6e2e372c-2370-4fa7-8f8d-6257ecf45830)
 
 
 
@@ -114,11 +115,11 @@
 
 # API 💻
 
-[My API ver 1.0](https://www.notion.so/NewChat-147b4c7ceb5f48d0911f4b7af08dbd66?pvs=4#d2e4e87a42504e389faedd257e1aac15)
+[My API ver 2.0](https://www.notion.so/NewChat-147b4c7ceb5f48d0911f4b7af08dbd66?pvs=4#d2e4e87a42504e389faedd257e1aac15)
 
 # ERD 🖇️
 
-[My ERD ver 1.0](https://github.com/yeb0/NewChat/wiki/Architecture,-ERD-ver-1.0)
+[My ERD ver 1.0 ~ 2.0](https://github.com/yeb0/NewChat/wiki/Architecture,-ERD-ver-1.0)
 
 # WIKI 📜
 [My WIKI](https://github.com/yeb0/NewChat/wiki)
