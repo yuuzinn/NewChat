@@ -92,10 +92,6 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         .chatRoom(save)
         .joinDt(now())
         .build();
-    System.out.println("---------------------------------");
-    System.out.println("userChatRoom = " + userChatRoom.getUser());
-    System.out.println("userChatRoom = " + userChatRoom.getChatRoom());
-    System.out.println("---------------------------------");
     // save
     userChatRoomRepository.save(userChatRoom);
     String topicName = BASIC_TOPIC + save.getId();
@@ -175,18 +171,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
   public List<ChatRoomDto> getRoomHeartSortList(Pageable pageable) {
     Page<ChatRoom> all = chatRoomRepository.findAllByOrderByHearts(pageable);
     List<ChatRoom> chatRooms = all.toList();
-    List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
-    for (ChatRoom chatRoom : chatRooms) {
-      ChatRoomDto build = ChatRoomDto.builder()
-          .id(chatRoom.getId())
-          .title(chatRoom.getTitle())
-          .userCountMax(chatRoom.getUserCountMax())
-          .currentUserCount((long) chatRoom.getUserChatRooms().size())
-          .heartCount(chatRoom.getHearts().size())
-          .build();
-      chatRoomDtos.add(build);
-    }
-    return chatRoomDtos;
+      return chatRooms.stream()
+              .map(ChatRoomDto::of)
+              .collect(Collectors.toList());
   }
 
   // 자신이 생성한 방 리스트 조회
@@ -276,14 +263,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
       throw new CustomException(NOT_ROOM_MEMBER);
     }
     // DTO 담기
-    List<ChatRoomUserDto> chatRoomUserDtos = new ArrayList<>();
-    for (UserChatRoom userChatRoom : userIds) {
-      ChatRoomUserDto build = ChatRoomUserDto.builder()
-          .nickname(userChatRoom.getUser().getNickname())
-          .status(userChatRoom.getUser().getStatus())
-          .build();
-      chatRoomUserDtos.add(build);
-    }
+    List<ChatRoomUserDto> chatRoomUserDtos = userIds.stream()
+            .map(ChatRoomUserDto::of)
+            .collect(Collectors.toList());
     return chatRoomUserDtos;
   }
 
@@ -302,17 +284,9 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     }
     Page<ChatRoom> chatRoomByInId = chatRoomRepository.findChatRoomByInId(ids, pageable);
     List<ChatRoom> chatRoomList = chatRoomByInId.toList();
-    List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
-    for (ChatRoom chatRoom : chatRoomList) {
-      ChatRoomDto build = ChatRoomDto.builder()
-          .id(chatRoom.getId())
-          .title(chatRoom.getTitle())
-          .heartCount(chatRoom.getHearts().size())
-          .currentUserCount((long) chatRoom.getUserChatRooms().size())
-          .userCountMax(chatRoom.getUserCountMax())
-          .build();
-      chatRoomDtos.add(build);
-    }
+    List<ChatRoomDto> chatRoomDtos = chatRoomList.stream()
+            .map(ChatRoomDto::of)
+            .collect(Collectors.toList());
     return chatRoomDtos;
   }
 
@@ -323,21 +297,12 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     Page<ChatRoom> search = chatRoomRepository.findByTitleContaining(roomName, pageable);
 
     List<ChatRoom> searchRoomList = search.toList();
-    List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
     if (searchRoomList.size() == 0) {
       throw new CustomException(NOT_FOUND_ROOM);
     }
-
-    for (ChatRoom chatRoom : searchRoomList) {
-      ChatRoomDto build = ChatRoomDto.builder()
-          .id(chatRoom.getId())
-          .title(chatRoom.getTitle())
-          .heartCount(chatRoom.getHearts().size())
-          .currentUserCount((long) chatRoom.getUserChatRooms().size())
-          .userCountMax(chatRoom.getUserCountMax())
-          .build();
-      chatRoomDtos.add(build);
-    }
+    List<ChatRoomDto> chatRoomDtos = searchRoomList.stream()
+            .map(ChatRoomDto::of)
+            .collect(Collectors.toList());
     return chatRoomDtos;
   }
 
